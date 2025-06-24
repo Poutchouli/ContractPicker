@@ -8,9 +8,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<<<<<<< HEAD
 
     <header>
         <h1>📊 Outil d'Aide à la Décision Stratégique</h1>
+=======
+    <header class="main-header">
+        <h1><i class="fa-solid fa-compass-drafting"></i> Aide à la Décision Stratégique</h1>
+        <div>
+            <button data-action="open-ai-modal" class="btn-header" title="Paramètres IA"><i class="fa-solid fa-brain"></i></button>
+            <span id="status-indicator" class="status-indicator"></span>
+        </div>
+>>>>>>> be100a087c9e04848d769d2267697d6176048921
     </header>
 
     <main class="container">
@@ -40,6 +49,7 @@
             </div>
         </section>
 
+<<<<<<< HEAD
         <section class="card">
             <h2>📝 2. Renseignez les Offres</h2>
             <div id="offers-container">
@@ -63,6 +73,42 @@
                 <div class="chart-wrapper">
                     <h3>Classement par Score Final</h3>
                     <canvas id="bar-chart"></canvas>
+=======
+        <!-- Colonne Principale: Configuration et Résultats -->
+        <div class="main-column">
+            <div class="widget" data-widget-id="config">
+                <div class="card">
+                    <h2 class="card-header"><i class="fa-solid fa-sliders"></i> Configuration & Simulation</h2>
+                    <div class="card-content">
+                        <div class="form-group"><label for="type-contrat">1. Type de Contrat</label><select id="type-contrat"></select></div>
+                        <div id="memo-container" class="memo-box" style="display:none;"></div>
+                        <div id="questionnaire-container"></div>
+                        <h3 class="sub-header">2. Paramètres de Simulation</h3>
+                        <form id="form-simulation" class="simulation-grid">
+                            <div class="form-group"><label for="sim-volume-nb">Volume N&B / mois</label><input type="number" id="sim-volume-nb" value="5000" required></div>
+                            <div class="form-group"><label for="sim-volume-couleur">Volume Couleur / mois</label><input type="number" id="sim-volume-couleur" value="500" required></div>
+                            <div class="form-group grid-span-2"><label for="sim-duree">Durée de comparaison (mois)</label><input type="number" id="sim-duree" value="36" required></div>
+                        </form>
+                        <h3 class="sub-header">3. Pondération des Critères</h3>
+                        <div id="ponderation-container">
+                            <div class="form-group"><label for="poids-cout">🐖 Importance : <span id="valeur-poids-cout">50</span>%</label><input type="range" id="poids-cout" min="0" max="100" value="50" class="slider"></div>
+                            <div class="form-group"><label for="poids-qualite">⏱️ Importance : <span id="valeur-poids-qualite">20</span>%</label><input type="range" id="poids-qualite" min="0" max="100" value="20" class="slider"></div>
+                            <div class="form-group"><label for="poids-modele">⚙️ Importance : <span id="valeur-poids-modele">15</span>%</label><input type="range" id="poids-modele" min="0" max="100" value="15" class="slider"></div>
+                            <div class="form-group"><label for="poids-ressenti">🤔 Importance : <span id="valeur-poids-ressenti">15</span>%</label><input type="range" id="poids-ressenti" min="0" max="100" value="15" class="slider"></div>
+                        </div>
+                        <button type="submit" form="form-simulation" class="btn btn-principal full-width"><i class="fa-solid fa-play"></i> Lancer la Comparaison</button>
+                    </div>
+                </div>
+            </div>
+            <div class="widget" data-widget-id="resultats">
+                <div class="card" id="section-resultats" style="display:none;">
+                    <h2 class="card-header"><i class="fa-solid fa-chart-pie"></i> Vue d'Ensemble</h2>
+                    <div class="card-content">
+                        <div class="chart-container"><canvas id="graphique-scores"></canvas></div>
+                        <div class="chart-container" style="margin-top: 2rem;"><canvas id="graphique-radar"></canvas></div>
+                        <div class="table-container"><table id="tableau-resultats"></table></div>
+                    </div>
+>>>>>>> be100a087c9e04848d769d2267697d6176048921
                 </div>
                 <div class="chart-wrapper">
                     <h3>Comparatif Forces / Faiblesses</h3>
@@ -72,6 +118,7 @@
              <button id="export-csv-btn">Exporter en CSV</button>
         </section>
 
+<<<<<<< HEAD
          <section class="card">
             <h2>🤖 Assistance Intelligente</h2>
             <div class="ai-features">
@@ -82,5 +129,81 @@
     </main>
 
     <script src="script.js"></script>
+=======
+        <!-- Colonne Latérale: Gestion des Offres -->
+        <div class="sidebar-column">
+            <div class="widget" data-widget-id="offres">
+                 <div class="card">
+                    <h2 class="card-header"><i class="fa-solid fa-list-check"></i> Gestion des Offres</h2>
+                    <div class="card-content">
+                        <div class="actions-fichiers">
+                            <button data-action="open-offer-modal" class="btn btn-principal"><i class="fa-solid fa-plus"></i> Nouvelle Offre</button>
+                            <button data-action="simulate-offer" class="btn btn-simulation" title="Ajouter une offre concurrente fictive"><i class="fa-solid fa-wand-magic-sparkles"></i> Simuler</button>
+                            <button data-action="export-csv" class="btn btn-secondaire" title="Exporter les données en CSV"><i class="fa-solid fa-file-export"></i> Exporter</button>
+                            <button data-action="import-csv" class="btn btn-secondaire" title="Importer des données CSV"><i class="fa-solid fa-file-import"></i> Importer</button>
+                            <input type="file" id="input-csv" accept=".csv" style="display: none;">
+                        </div>
+                         <div id="actions-selection" class="actions-selection-box" style="display:none;">
+                            <button data-action="group-selection" class="btn btn-info"><i class="fa-solid fa-object-group"></i> Grouper la sélection</button>
+                            <button data-action="delete-selection" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Supprimer la sélection</button>
+                        </div>
+                        <div id="liste-offres"></div>
+                        <button data-action="purge-offers" class="btn btn-danger full-width" style="margin-top: 1rem;"><i class="fa-solid fa-fire-extinguisher"></i> Purger toutes les offres</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Fenêtre Modale pour la Saisie d'Offre -->
+    <div id="offre-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="modal-title"></h3><button data-action="close-offer-modal" class="close-button">&times;</button></div>
+            <div class="modal-body">
+                <form id="form-offre">
+                    <input type="hidden" id="offre-id">
+                    <div class="form-grid">
+                        <div class="form-group"><label for="prestataire">Prestataire</label><input type="text" id="prestataire" required></div>
+                        <div class="form-group"><label for="fabricant">Fabricant</label><select id="fabricant" required></select></div>
+                        <div class="form-group"><label for="modele">Modèle</label><select id="modele" required></select><small id="prix-indicatif-modele"></small></div>
+                        <div class="form-group"><label for="gti-heures">GTI (heures)</label><input type="number" id="gti-heures" required></div>
+                    </div>
+                    <h4 class="sub-header">Conditions du Contrat</h4>
+                     <div class="form-grid">
+                        <div class="form-group"><label for="duree">Durée (mois)</label><input type="number" id="duree" required></div>
+                        <div class="form-group"><label for="location">Loyer (€/mois)</label><input type="number" step="0.01" id="location" required></div>
+                        <div class="form-group"><label for="cout-nb">Coût N&B (€)</label><input type="number" step="0.00001" id="cout-nb" required></div>
+                        <div class="form-group"><label for="cout-couleur">Coût Couleur (€)</label><input type="number" step="0.00001" id="cout-couleur" required></div>
+                    </div>
+                    <h4 class="sub-header">Coûts Additionnels</h4>
+                    <div id="couts-additionnels-container"></div>
+                    <button type="button" data-action="add-cost-field" class="btn btn-secondaire"><i class="fa-solid fa-plus"></i> Ajouter un coût</button>
+                    <hr>
+                    <div class="form-group"><label for="notes">Notes & Clauses</label><textarea id="notes"></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-action="close-offer-modal" class="btn btn-secondaire">Annuler</button>
+                <button type="submit" form="form-offre" class="btn btn-principal"><i class="fa-solid fa-save"></i> Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fenêtre Modale pour les Paramètres IA -->
+    <div id="ai-settings-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header"><h3><i class="fa-solid fa-brain"></i> Paramètres IA (Gemini)</h3><button data-action="close-ai-modal" class="close-button">&times;</button></div>
+            <div class="modal-body">
+                <p>Pour activer l'analyse par IA, veuillez fournir votre clé API Gemini. Vous pouvez en obtenir une sur <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.</p>
+                <div class="form-group"><label for="gemini-api-key">Clé API Gemini</label><input type="password" id="gemini-api-key" placeholder="Entrez votre clé API ici"></div>
+            </div>
+            <div class="modal-footer"><button data-action="save-api-key" class="btn btn-principal">Enregistrer</button></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="js/app.js" type="module"></script>
+>>>>>>> be100a087c9e04848d769d2267697d6176048921
 </body>
 </html>
