@@ -1,18 +1,19 @@
 /ContractPicker/
 │
 ├── 📄 index.html
+├── 📄 README.md
 │
 ├── 📁 css/
 │   └── 🎨 style.css
 │
 ├── 📁 js/
-│   ├── ⚙️ config.js
-│   ├── 🔐 crypto.js
+│   ├── 🚀 app.js
 │   ├── 📦 data.js
 │   ├── 🖼️ ui.js
-│   └── 🚀 app.js
+│   └── 🧠 ai.js
 │
-├── 📄 README.md
-│
-└── 📁 tools/
-    └── 🐍 encrypt_config.py
+└── 📁 data/
+    ├── 📄 modeles.csv
+    ├── 📄 questions.csv
+    ├── 📄 memos.csv
+    └── 📄 simulations.csv

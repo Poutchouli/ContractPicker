@@ -11,7 +11,7 @@
     <header class="main-header">
         <h1><i class="fa-solid fa-compass-drafting"></i> Aide à la Décision Stratégique</h1>
         <div>
-            <button id="btn-ai-settings" class="btn-header" title="Paramètres IA"><i class="fa-solid fa-brain"></i></button>
+            <button data-action="open-ai-modal" class="btn-header" title="Paramètres IA"><i class="fa-solid fa-brain"></i></button>
             <span id="status-indicator" class="status-indicator"></span>
         </div>
     </header>
@@ -20,16 +20,11 @@
 
         <!-- Colonne Principale: Configuration et Résultats -->
         <div class="main-column">
-            <!-- WIDGET 1: Configuration & Simulation -->
             <div class="widget" data-widget-id="config">
                 <div class="card">
                     <h2 class="card-header"><i class="fa-solid fa-sliders"></i> Configuration & Simulation</h2>
                     <div class="card-content">
-                        <!-- Contenu existant -->
-                        <div class="form-group">
-                            <label for="type-contrat">1. Type de Contrat</label>
-                            <select id="type-contrat"></select>
-                        </div>
+                        <div class="form-group"><label for="type-contrat">1. Type de Contrat</label><select id="type-contrat"></select></div>
                         <div id="memo-container" class="memo-box" style="display:none;"></div>
                         <div id="questionnaire-container"></div>
                         <h3 class="sub-header">2. Paramètres de Simulation</h3>
@@ -49,8 +44,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- WIDGET 4: Résultats & Analyse -->
             <div class="widget" data-widget-id="resultats">
                 <div class="card" id="section-resultats" style="display:none;">
                     <h2 class="card-header"><i class="fa-solid fa-chart-pie"></i> Vue d'Ensemble</h2>
@@ -67,30 +60,26 @@
             </div>
         </div>
 
-        <!-- Colonne Latérale: Gestion et Saisie -->
+        <!-- Colonne Latérale: Gestion des Offres -->
         <div class="sidebar-column">
-            <!-- WIDGET 2: Gestion des Offres -->
             <div class="widget" data-widget-id="offres">
                  <div class="card">
                     <h2 class="card-header"><i class="fa-solid fa-list-check"></i> Gestion des Offres</h2>
                     <div class="card-content">
                         <div class="actions-fichiers">
-                            <button id="btn-ajouter-offre" class="btn btn-principal"><i class="fa-solid fa-plus"></i> Nouvelle Offre</button>
-                            <button id="btn-simuler-offre" class="btn btn-simulation" title="Ajouter une offre concurrente fictive"><i class="fa-solid fa-wand-magic-sparkles"></i> Simuler</button>
+                            <button data-action="open-offer-modal" class="btn btn-principal"><i class="fa-solid fa-plus"></i> Nouvelle Offre</button>
+                            <button data-action="simulate-offer" class="btn btn-simulation" title="Ajouter une offre concurrente fictive"><i class="fa-solid fa-wand-magic-sparkles"></i> Simuler</button>
+                            <button data-action="export-csv" class="btn btn-secondaire" title="Exporter les données en CSV"><i class="fa-solid fa-file-export"></i> Exporter</button>
+                            <button data-action="import-csv" class="btn btn-secondaire" title="Importer des données CSV"><i class="fa-solid fa-file-import"></i> Importer</button>
+                            <input type="file" id="input-csv" accept=".csv" style="display: none;">
                         </div>
-                        <div id="actions-selection" class="actions-selection-box" style="display:none;">
-                            <button id="btn-grouper-selection" class="btn btn-info"><i class="fa-solid fa-object-group"></i> Grouper</button>
-                            <button id="btn-supprimer-selection" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Supprimer</button>
+                         <div id="actions-selection" class="actions-selection-box" style="display:none;">
+                            <button data-action="group-selection" class="btn btn-info"><i class="fa-solid fa-object-group"></i> Grouper la sélection</button>
+                            <button data-action="delete-selection" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Supprimer la sélection</button>
                         </div>
                         <div id="liste-offres"></div>
+                        <button data-action="purge-offers" class="btn btn-danger full-width" style="margin-top: 1rem;"><i class="fa-solid fa-fire-extinguisher"></i> Purger toutes les offres</button>
                     </div>
-                </div>
-            </div>
-            <!-- WIDGET 5: Poubelle -->
-            <div class="widget" data-widget-id="poubelle">
-                <div id="poubelle-zone" class="poubelle-zone">
-                    <i class="fa-solid fa-trash-can"></i>
-                    <span>Glissez ici pour supprimer</span>
                 </div>
             </div>
         </div>
@@ -99,10 +88,7 @@
     <!-- Fenêtre Modale pour la Saisie d'Offre -->
     <div id="offre-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">Ajouter une Nouvelle Offre</h3>
-                <button id="btn-close-offre-modal" class="close-button">&times;</button>
-            </div>
+            <div class="modal-header"><h3 id="modal-title"></h3><button data-action="close-offer-modal" class="close-button">&times;</button></div>
             <div class="modal-body">
                 <form id="form-offre">
                     <input type="hidden" id="offre-id">
@@ -121,24 +107,29 @@
                     </div>
                     <h4 class="sub-header">Coûts Additionnels</h4>
                     <div id="couts-additionnels-container"></div>
-                    <button type="button" id="btn-ajouter-cout" class="btn btn-secondaire"><i class="fa-solid fa-plus"></i> Ajouter un coût</button>
+                    <button type="button" data-action="add-cost-field" class="btn btn-secondaire"><i class="fa-solid fa-plus"></i> Ajouter un coût</button>
                     <hr>
                     <div class="form-group"><label for="notes">Notes & Clauses</label><textarea id="notes"></textarea></div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btn-annuler-modal" class="btn btn-secondaire">Annuler</button>
+                <button type="button" data-action="close-offer-modal" class="btn btn-secondaire">Annuler</button>
                 <button type="submit" form="form-offre" class="btn btn-principal"><i class="fa-solid fa-save"></i> Enregistrer</button>
             </div>
         </div>
     </div>
 
-
-    <!-- Fenêtre Modale pour les Paramètres IA (inchangée) -->
+    <!-- Fenêtre Modale pour les Paramètres IA -->
     <div id="ai-settings-modal" class="modal-overlay" style="display: none;">
-        <!-- Contenu existant -->
+        <div class="modal-content">
+            <div class="modal-header"><h3><i class="fa-solid fa-brain"></i> Paramètres IA (Gemini)</h3><button data-action="close-ai-modal" class="close-button">&times;</button></div>
+            <div class="modal-body">
+                <p>Pour activer l'analyse par IA, veuillez fournir votre clé API Gemini. Vous pouvez en obtenir une sur <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.</p>
+                <div class="form-group"><label for="gemini-api-key">Clé API Gemini</label><input type="password" id="gemini-api-key" placeholder="Entrez votre clé API ici"></div>
+            </div>
+            <div class="modal-footer"><button data-action="save-api-key" class="btn btn-principal">Enregistrer</button></div>
+        </div>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>

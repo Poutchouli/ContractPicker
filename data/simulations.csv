@@ -1,0 +1,6 @@
+type_contrat;nom_prestataire;fabricant;nom_modele;gti_heures;duree;location;cout_nb;cout_couleur;notes
+copieur;Prestataire A;Fabricant X;Modèle 1;24;36;150.0;0.01;0.05;Offre spéciale pour les nouveaux clients
+copieur;Prestataire B;Fabricant Y;Modèle 2;48;48;200.0;0.015;0.06;Maintenance incluse
+copieur;Prestataire C;Fabricant Z;Modèle 3;12;24;100.0;0.02;0.07;Offre standard
+copieur;Prestataire D;Fabricant X;Modèle 4;36;60;250.0;0.012;0.055;Garantie prolongée
+copieur;Prestataire E;Fabricant Y;Modèle 5;24;12;180.0;0.018;0.065;Support technique 24/7

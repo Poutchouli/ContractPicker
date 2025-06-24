@@ -2,14 +2,14 @@
 export const AIAnalyzer = (() => {
     let apiKey = localStorage.getItem('geminiApiKey_v1') || "";
 
-    const calculerScores = (offresAComparer, DOMRefs, modelesDb) => {
+    const calculerScores = (offresAComparer, DOMRefs, modelesDb, allOffres) => {
         const volumeNb = parseInt(document.getElementById('sim-volume-nb').value);
         const volumeCouleur = parseInt(document.getElementById('sim-volume-couleur').value);
         const dureeSim = parseInt(document.getElementById('sim-duree').value);
 
         let resultats = offresAComparer.map(offre => {
             if (offre.isGroup) {
-                const enfants = offre.children.map(id => DataManager.getOffreById(id)).filter(Boolean);
+                const enfants = offre.children.map(id => allOffres.find(o => o.id === id)).filter(Boolean);
                 if (enfants.length === 0) return null;
                 let tcoGroupe = 0;
                 enfants.forEach(enfant => {
@@ -22,6 +22,12 @@ export const AIAnalyzer = (() => {
                     });
                     tcoGroupe += tcoEnfant;
                 });
+                
+                // Appliquer la remise
+                if(offre.remise_percent > 0) {
+                    tcoGroupe *= (1 - (offre.remise_percent / 100));
+                }
+
                 return { ...offre, tco: tcoGroupe, gti_heures: enfants.reduce((acc, e) => acc + e.gti_heures, 0) / enfants.length, score_modele_moyen: enfants.reduce((acc, e) => acc + (modelesDb[e.modele]?.score_modele || 75), 0) / enfants.length };
             } else {
                 const coutConsoMensuel = (volumeNb * offre.coutNb) + (volumeCouleur * offre.coutCouleur);
