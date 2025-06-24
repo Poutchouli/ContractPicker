@@ -6,103 +6,48 @@ body {
     margin: 0;
     padding: 20px;
 }
+.container { max-width: 1200px; margin: 0 auto; display: grid; gap: 20px; }
+.card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+h1, h2, h3 { color: #1a253c; }
+button { background-color: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s; }
+button:hover { background-color: #0056b3; }
+#add-offer-btn { background-color: #28a745; }
+#add-offer-btn:hover { background-color: #218838; }
+#group-offers-btn { background-color: #ffc107; color: #212529;}
+#group-offers-btn:hover { background-color: #e0a800; }
+input[type="text"], input[type="number"] { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+.weights { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.weight-item { display: flex; flex-direction: column; }
+.weight-item label { margin-bottom: 5px; font-weight: bold; }
+.offer-card { border: 1px solid #eee; border-radius: 5px; padding: 15px; margin-bottom: 15px; }
+.offer-header { display: flex; align-items: center; gap: 10px; }
+.offer-header .offer-group-checkbox { width: auto; margin: 0; }
+.offer-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px; }
+.offer-actions, .results-actions { display: flex; gap: 10px; margin-top: 15px; }
+.charts-container { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.chart-wrapper { position: relative; height: 40vh; }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    gap: 20px;
-}
+/* Styles pour le groupage */
+.hidden { display: none !important; }
 
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-h1, h2, h3 {
-    color: #1a253c;
-}
-
-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.2s;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-#add-offer-btn {
-    background-color: #28a745;
-}
-#add-offer-btn:hover {
-    background-color: #218838;
-}
-
-input[type="text"], input[type="number"] {
-    width: 100%;
-    padding: 8px;
-    margin: 5px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-.weights {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.weight-item {
-    display: flex;
-    flex-direction: column;
-}
-
-.weight-item label {
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.weight-item input[type="range"] {
-    width: 100%;
-}
-
-.offer-card {
-    border: 1px solid #eee;
+.grouped-offer-card {
+    border: 2px dashed #007bff;
+    background-color: #f0f8ff;
     border-radius: 5px;
     padding: 15px;
     margin-bottom: 15px;
 }
-
-.offer-inputs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-}
-
-.charts-container {
-    margin-top: 20px;
+.lot-title { font-weight: bold; font-size: 1.1em; }
+.grouped-offer-details {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 10px;
+    margin: 10px 0;
 }
+.lot-discount { display: flex; align-items: center; gap: 10px; }
+.lot-discount-input { max-width: 150px; }
+.lot-discount .ungroup-btn { background-color: #dc3545; }
+.lot-discount .ungroup-btn:hover { background-color: #c82333; }
 
-.chart-wrapper {
-    position: relative;
-    height: 40vh;
-}
 
-@media (max-width: 900px) {
-    .charts-container {
-        grid-template-columns: 1fr;
-    }
-}
+@media (max-width: 900px) { .charts-container { grid-template-columns: 1fr; } }
