@@ -78,8 +78,8 @@
                 <!-- plus de bouton copier -->
             </div>
             <p style="color:#607d8b;font-size:15px;margin-top:10px;">Les données de vos offres s'affichent ci-dessous en CSV. Sélectionnez et copiez ce texte pour l'utiliser dans Excel, Google Sheets, etc.</p>
-            <!-- Le textarea CSV sera injecté par JS -->
-            <form id="php-export-form" action="export.php" method="POST" target="_blank" style="margin-top:16px;">
+            <textarea id="csv-preview" readonly style="width:100%;min-height:60px;margin:10px 0 0 0;font-size:13px;background:#f5f5f5;color:#333;border:1px solid #b0bec5;resize:vertical;"></textarea>
+            <form id="php-export-form" action="export.php" method="POST" target="_blank" style="margin-top:8px;">
                 <input type="hidden" name="csv" id="php-export-csv-input">
                 <button type="submit" id="php-export-btn" style="margin-top:8px;">Exporter en CSV (télécharger via PHP)</button>
                 <span style="color:#607d8b;font-size:13px;margin-left:8px;">(optionnel&nbsp;: téléchargement direct, nécessite PHP)</span>

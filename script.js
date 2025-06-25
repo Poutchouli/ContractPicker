@@ -563,15 +563,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const offers = getOffersDataWithSysdate();
         const realtimeDiv = document.getElementById('realtime-csv-output');
         const phpExportInput = document.getElementById('php-export-csv-input');
+        const csvPreview = document.getElementById('csv-preview');
         if (!offers.length) {
             if (realtimeDiv) realtimeDiv.textContent = '';
             if (phpExportInput) phpExportInput.value = '';
+            if (csvPreview) csvPreview.value = '';
             return;
         }
-        let headers = ['Nom de l\'offre','Coût Total (€)','Type coût','Délai Interv. (h)','Score Matériel','Ressenti','Note','Engagement (mois)','Pénalités (€)','Préavis (jours)'];
+        let headers = ["Nom de l'offre","Coût Total (€)","Type coût","Délai Interv. (h)","Score Matériel","Ressenti","Note","Engagement (mois)","Pénalités (€)","Préavis (jours)"];
         for(let i=1;i<=10;i++) { headers.push(`Option ${i} (€)`, `Option ${i} (desc.)`); }
         headers.push('Date création');
-        let lines = [headers.join('\t')];
+        let lines = [headers.join(';')];
         for(const offer of offers) {
             let row = [offer.name||'',offer.cost||'',offer.costType||'',offer.sla||'',offer.quality||'',offer.feeling||'',offer.note||'',offer.engagement||'',offer.penalty||'',offer.cancelDelay||''];
             for(let i=0;i<10;i++) {
@@ -579,12 +581,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.push(opt.amount||'', opt.note||'');
             }
             row.push(offer.sysdate||'');
-            lines.push(row.join('\t'));
+            lines.push(row.map(x => (typeof x === 'string' && x.includes(';')) ? '"'+x.replace(/"/g,'""')+'"' : x).join(';'));
         }
         const csvString = lines.join('\n');
         if (realtimeDiv) realtimeDiv.textContent = csvString;
         if (phpExportInput) phpExportInput.value = csvString;
+        if (csvPreview) csvPreview.value = csvString;
     }
+
+    // --- Met à jour tout en temps réel ---
+    function updateAllViews() {
+        renderOffersTable();
+        renderRealtimeCsv();
+        enforceExtraOptionLimit();
+    }
+    ['input','change'].forEach(evt => {
+        document.body.addEventListener(evt, e => {
+            if (e.target.closest('.offer-card') || e.target.closest('.grouped-offer-card')) {
+                updateAllViews();
+            }
+        });
+    });
+    updateAllViews();
+
+    // --- Sécurise l'export PHP et log si problème ---
+    function setupPhpExport() {
+        const form = document.getElementById('php-export-form');
+        const csvInput = document.getElementById('php-export-csv-input');
+        const exportBtn = document.getElementById('php-export-btn');
+        if (!form || !csvInput || !exportBtn) return;
+        exportBtn.addEventListener('click', function(e) {
+            updateAllViews(); // force update juste avant export
+            if (!csvInput.value.trim()) {
+                e.preventDefault();
+                window.liveLog && window.liveLog('Aucune donnée à exporter (CSV vide).', 'warn');
+                alert('Aucune donnée à exporter.');
+                return false;
+            }
+        });
+    }
+    setupPhpExport();
 
     // --- Nouvelle fonction pour collecter les données avec sysdate et options fixes ---
     function getOffersDataWithSysdate() {
@@ -633,19 +669,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // --- Met à jour tout en temps réel ---
-    function updateAllViews() {
-        renderOffersTable();
-        renderRealtimeCsv();
-        enforceExtraOptionLimit();
-    }
-    ['input','change'].forEach(evt => {
-        document.body.addEventListener(evt, e => {
-            if (e.target.closest('.offer-card') || e.target.closest('.grouped-offer-card')) {
-                updateAllViews();
-            }
-        });
-    });
-    updateAllViews();
 });
