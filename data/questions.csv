@@ -1,6 +1,0 @@
-type_contrat;question;description_cout;periodicite_mois
-copieur;Le vendeur vous impose-t-il un volume minimum de pages à payer chaque mois ?;Coût du forfait minimum non atteint;1
-copieur;Y a-t-il des frais uniques pour l'installation ou la mise en réseau ?;Frais d'installation;0
-copieur;Le contrat spécifie-t-il des frais de restitution en fin de période ?;Frais de restitution/effacement DD;0
-copieur;La formation des utilisateurs est-elle facturée en supplément ?;Formation utilisateurs;0
-copieur;Existe-t-il un supplément pour une facturation détaillée ou un portail web ?;Supplément facturation;12
