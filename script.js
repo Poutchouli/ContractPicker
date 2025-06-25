@@ -525,4 +525,119 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     setupPhpExport();
+
+    // --- Ajout de la date de création à chaque offre ---
+    function getSysdate() {
+        const now = new Date();
+        return now.toISOString().slice(0, 19).replace('T', ' ');
+    }
+
+    // --- Génération du tableau des offres ---
+    function renderOffersTable() {
+        const container = document.getElementById('offers-table-container');
+        if (!container) return;
+        const offers = getOffersDataWithSysdate();
+        if (!offers.length) { container.innerHTML = '<em>Aucune offre saisie.</em>'; return; }
+        let html = '<table style="width:100%;border-collapse:collapse;font-size:15px;">';
+        html += '<thead><tr>';
+        html += '<th>Nom de l\'offre</th><th>Coût Total (€)</th><th>Type coût</th><th>Délai Interv. (h)</th><th>Score Matériel</th><th>Ressenti</th><th>Note</th><th>Engagement (mois)</th><th>Pénalités (€)</th><th>Préavis (jours)</th>';
+        for(let i=1;i<=10;i++) html += `<th>Option ${i} (€)</th><th>Option ${i} (desc.)</th>`;
+        html += '<th>Date création</th>';
+        html += '</tr></thead><tbody>';
+        for(const offer of offers) {
+            html += '<tr>';
+            html += `<td>${offer.name||''}</td><td>${offer.cost||''}</td><td>${offer.costType||''}</td><td>${offer.sla||''}</td><td>${offer.quality||''}</td><td>${offer.feeling||''}</td><td>${offer.note||''}</td><td>${offer.engagement||''}</td><td>${offer.penalty||''}</td><td>${offer.cancelDelay||''}</td>`;
+            for(let i=0;i<10;i++) {
+                const opt = offer.extraOptions[i]||{};
+                html += `<td>${opt.amount||''}</td><td>${opt.note||''}</td>`;
+            }
+            html += `<td>${offer.sysdate||''}</td>`;
+            html += '</tr>';
+        }
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    // --- Génération des données CSV/TSV en temps réel ---
+    function renderRealtimeCsv() {
+        const offers = getOffersDataWithSysdate();
+        if (!offers.length) { document.getElementById('realtime-csv-output').textContent = ''; return; }
+        let headers = ['Nom de l\'offre','Coût Total (€)','Type coût','Délai Interv. (h)','Score Matériel','Ressenti','Note','Engagement (mois)','Pénalités (€)','Préavis (jours)'];
+        for(let i=1;i<=10;i++) { headers.push(`Option ${i} (€)`, `Option ${i} (desc.)`); }
+        headers.push('Date création');
+        let lines = [headers.join('\t')];
+        for(const offer of offers) {
+            let row = [offer.name||'',offer.cost||'',offer.costType||'',offer.sla||'',offer.quality||'',offer.feeling||'',offer.note||'',offer.engagement||'',offer.penalty||'',offer.cancelDelay||''];
+            for(let i=0;i<10;i++) {
+                const opt = offer.extraOptions[i]||{};
+                row.push(opt.amount||'', opt.note||'');
+            }
+            row.push(offer.sysdate||'');
+            lines.push(row.join('\t'));
+        }
+        document.getElementById('realtime-csv-output').textContent = lines.join('\n');
+    }
+
+    // --- Nouvelle fonction pour collecter les données avec sysdate et options fixes ---
+    function getOffersDataWithSysdate() {
+        const data = [];
+        offersContainer.querySelectorAll('.offer-card').forEach(card => {
+            if (card.classList.contains('hidden')) return;
+            const name = card.querySelector('.offer-name')?.value || '';
+            const cost = parseFloat(card.querySelector('.offer-cost')?.value) || 0;
+            const costType = card.querySelector('.offer-cost-type')?.value || 'one';
+            let costTotal = convertToYearly(cost, 1, costType);
+            const extraOptions = [];
+            let i = 0;
+            card.querySelectorAll('.extra-cost-row').forEach(row => {
+                if (i<10) {
+                    const amount = parseFloat(row.querySelector('.extra-cost-amount')?.value) || '';
+                    const note = row.querySelector('.extra-cost-note')?.value || '';
+                    extraOptions.push({amount, note});
+                }
+                i++;
+            });
+            while(extraOptions.length<10) extraOptions.push({amount:'',note:''});
+            const sla = parseFloat(card.querySelector('.offer-sla')?.value) || '';
+            const quality = parseFloat(card.querySelector('.offer-quality')?.value) || '';
+            const feeling = parseFloat(card.querySelector('.offer-feeling')?.value) || '';
+            const note = card.querySelector('.contract-note')?.value || '';
+            const engagement = parseInt(card.querySelector('.contract-engagement')?.value) || '';
+            const penalty = parseFloat(card.querySelector('.contract-penalty')?.value) || '';
+            const cancelDelay = parseInt(card.querySelector('.contract-cancel-delay')?.value) || '';
+            let sysdate = card.dataset.sysdate;
+            if (!sysdate) {
+                sysdate = getSysdate();
+                card.dataset.sysdate = sysdate;
+            }
+            data.push({ name, cost: costTotal, costType, sla, quality, feeling, note, engagement, penalty, cancelDelay, extraOptions, sysdate });
+        });
+        return data;
+    }
+
+    // --- Limite le nombre d'options supplémentaires à 10 ---
+    function enforceExtraOptionLimit() {
+        document.querySelectorAll('.offer-card').forEach(card => {
+            const addBtn = card.querySelector('.add-extra-cost-btn');
+            const list = card.querySelector('.extra-costs-list');
+            if (list && addBtn) {
+                addBtn.disabled = list.querySelectorAll('.extra-cost-row').length >= 10;
+            }
+        });
+    }
+
+    // --- Met à jour tout en temps réel ---
+    function updateAllViews() {
+        renderOffersTable();
+        renderRealtimeCsv();
+        enforceExtraOptionLimit();
+    }
+    ['input','change'].forEach(evt => {
+        document.body.addEventListener(evt, e => {
+            if (e.target.closest('.offer-card') || e.target.closest('.grouped-offer-card')) {
+                updateAllViews();
+            }
+        });
+    });
+    updateAllViews();
 });
