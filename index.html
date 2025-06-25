@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Outil d'Aide à la Décision Stratégique</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -18,7 +17,8 @@
             <h2>1. Saisissez et Normalisez vos Offres</h2>
             <div class="contract-type-row" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;">
                 <label for="contract-type-select" style="font-weight:bold;">Type de contrat :</label>
-                <select id="contract-type-select" style="min-width:200px;"></select>
+                <input list="contract-type-list" id="contract-type-input" placeholder="Choisissez ou saisissez un type..." style="min-width:200px;">
+                <datalist id="contract-type-list"></datalist>
                 <button id="add-default-offer-btn" type="button">Ajouter ce modèle</button>
             </div>
             <div id="contract-type-tips" style="margin-bottom:10px;color:#1976d2;font-size:15px;"></div>
@@ -73,12 +73,12 @@
             </div>
         </section>
         <section class="card">
-            <h2>2. Exporter ou Importer vos Offres</h2>
+            <h2>2. Données CSV en Temps Réel</h2>
             <div class="results-actions">
-                <button id="export-csv-btn">Exporter en CSV</button>
-                <!-- Le bouton d'import est ajouté dynamiquement par JS -->
+                <!-- plus de bouton copier -->
             </div>
-            <p style="color:#607d8b;font-size:15px;margin-top:10px;">Vous pouvez exporter vos offres pour les analyser ailleurs, ou réimporter un fichier pour continuer la saisie ou modifier des offres existantes.</p>
+            <p style="color:#607d8b;font-size:15px;margin-top:10px;">Les données de vos offres s'affichent ci-dessous en CSV. Sélectionnez et copiez ce texte pour l'utiliser dans Excel, Google Sheets, etc.</p>
+            <!-- Le textarea CSV sera injecté par JS -->
         </section>
     </main>
     
@@ -103,43 +103,5 @@
     </template>
 
     <script src="script.js"></script>
-<!-- Code injected by live-server -->
-<script>
-	// <![CDATA[  <-- For SVG support
-	if ('WebSocket' in window) {
-		(function () {
-			function refreshCSS() {
-				var sheets = [].slice.call(document.getElementsByTagName("link"));
-				var head = document.getElementsByTagName("head")[0];
-				for (var i = 0; i < sheets.length; ++i) {
-					var elem = sheets[i];
-					var parent = elem.parentElement || head;
-					parent.removeChild(elem);
-					var rel = elem.rel;
-					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-					}
-					parent.appendChild(elem);
-				}
-			}
-			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-			var address = protocol + window.location.host + window.location.pathname + '/ws';
-			var socket = new WebSocket(address);
-			socket.onmessage = function (msg) {
-				if (msg.data == 'reload') window.location.reload();
-				else if (msg.data == 'refreshcss') refreshCSS();
-			};
-			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-				console.log('Live reload enabled.');
-				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-			}
-		})();
-	}
-	else {
-		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-	}
-	// ]]>
-</script>
 </body>
 </html>

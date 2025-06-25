@@ -190,118 +190,28 @@ document.addEventListener('DOMContentLoaded', () => {
             cancelDelay: d.cancelDelay,
             extraCosts: d.extraCosts ? JSON.stringify(d.extraCosts) : ''
         }));
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'export.php';
-        const dataInput = document.createElement('input');
-        dataInput.type = 'hidden';
-        dataInput.name = 'export_data';
-        dataInput.value = JSON.stringify(exportData);
-        form.appendChild(dataInput);
-        document.body.appendChild(form);
-        form.submit();
-        document.body.removeChild(form);
-    });
-
-    // --- Import CSV/JSON ---
-    const importBtn = document.createElement('button');
-    importBtn.textContent = 'Importer CSV/JSON';
-    importBtn.id = 'import-csv-btn';
-    importBtn.style.marginLeft = '10px';
-    document.querySelector('.results-actions').appendChild(importBtn);
-    importBtn.addEventListener('click', () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.csv,.json';
-        input.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                let data;
-                try {
-                    if (file.name.endsWith('.json')) {
-                        data = JSON.parse(evt.target.result);
-                    } else {
-                        // Simple CSV to JSON (assume ; separator)
-                        const lines = evt.target.result.split(/\r?\n/).filter(Boolean);
-                        const headers = lines[0].split(';');
-                        data = lines.slice(1).map(line => {
-                            const values = line.split(';');
-                            const obj = {};
-                            headers.forEach((h, i) => obj[h.trim()] = values[i]);
-                            return obj;
-                        });
-                    }
-                } catch (e) { alert('Erreur de lecture du fichier.'); return; }
-                // Clear current offers
-                offersContainer.innerHTML = '';
-                data.forEach((d, idx) => {
-                    const offerCard = document.createElement('div');
-                    offerCard.className = 'offer-card';
-                    offerCard.dataset.id = idx + 1;
-                    offerCard.innerHTML = `
-                        <div class="offer-header">
-                            <input type="checkbox" class="offer-group-checkbox" title="Sélectionner pour regrouper">
-                            <input type="text" placeholder="Nom de l'offre (ex: Contrat A)" class="offer-name" value="${d.name || ''}">
-                            <button class="delete-offer-btn" title="Supprimer l'offre" aria-label="Supprimer l'offre">🗑️</button>
-                        </div>
-                        <div class="offer-inputs">
-                            <input type="number" placeholder="Coût Total (€)" class="offer-cost" value="${d.cost || ''}">
-                            <select class="offer-cost-type"><option value="one">Paiement unique</option><option value="monthly">Mensuel</option><option value="quarterly">Trimestriel</option><option value="yearly">Annuel</option></select>
-                            <input type="number" placeholder="Délai Interv. (heures)" class="offer-sla" value="${d.sla || ''}">
-                            <input type="number" placeholder="Score Matériel (/100)" class="offer-quality" value="${d.quality || ''}">
-                            <input type="number" placeholder="Votre Ressenti (/100)" class="offer-feeling" value="${d.feeling || ''}">
-                        </div>
-                        <div class="contract-details">
-                            <textarea class="contract-note" placeholder="Note sur le contrat (ex: particularités, remarques...)" rows="2">${d.note || ''}</textarea>
-                            <div class="contract-meta">
-                                <input type="number" class="contract-engagement" min="0" placeholder="Durée d'engagement (mois)" value="${d.engagement || ''}">
-                                <input type="number" class="contract-penalty" min="0" placeholder="Pénalités de résiliation (€)" value="${d.penalty || ''}">
-                                <input type="number" class="contract-cancel-delay" min="0" placeholder="Préavis avant résiliation (jours)" value="${d.cancelDelay || ''}">
-                            </div>
-                        </div>
-                        <div class="extra-costs-list"></div>
-                        <button class="add-extra-cost-btn" type="button">+ Ajouter un coût supplémentaire</button>
-                        <template class="extra-cost-template">
-                            <div class="extra-cost-row">
-                                <input type="number" class="extra-cost-amount" placeholder="Montant (€)">
-                                <input type="number" class="extra-cost-frequency" min="1" value="1" style="width:60px;" title="Fréquence">
-                                <select class="extra-cost-period">
-                                    <option value="one">fois</option>
-                                    <option value="monthly">/mois</option>
-                                    <option value="quarterly">/trimestre</option>
-                                    <option value="yearly">/an</option>
-                                </select>
-                                <input type="text" class="extra-cost-note" placeholder="Note (ex: maintenance, livraison...)" style="width:180px;">
-                                <button class="remove-extra-cost-btn" type="button" title="Supprimer">🗑️</button>
-                            </div>
-                        </template>
-                    `;
-                    offersContainer.appendChild(offerCard);
-                    offerCard.querySelector('.delete-offer-btn').addEventListener('click', () => offerCard.remove());
-                    setupExtraCostHandlers(offerCard);
-                    // Restore extra costs if present
-                    if (d.extraCosts) {
-                        let extraCostsArr = [];
-                        try { extraCostsArr = typeof d.extraCosts === 'string' ? JSON.parse(d.extraCosts) : d.extraCosts; } catch {}
-                        extraCostsArr.forEach(ec => {
-                            const addBtn = offerCard.querySelector('.add-extra-cost-btn');
-                            addBtn.click();
-                            const lastRow = offerCard.querySelector('.extra-costs-list .extra-cost-row:last-child');
-                            if (lastRow) {
-                                lastRow.querySelector('.extra-cost-amount').value = ec.amount || '';
-                                lastRow.querySelector('.extra-cost-frequency').value = ec.frequency || 1;
-                                lastRow.querySelector('.extra-cost-period').value = ec.period || 'one';
-                                lastRow.querySelector('.extra-cost-note').value = ec.note || '';
-                            }
-                        });
-                    }
-                });
-            };
-            reader.readAsText(file);
+        // Générer le CSV (UTF-8, séparateur point-virgule)
+        const headers = ['Nom de l\'offre','Coût Total (€)','Type coût','Délai Interv. (h)','Score Matériel (/100)','Ressenti (/100)','Note','Engagement (mois)','Pénalités (€)','Préavis (jours)','Coûts supp. (JSON)'];
+        const rows = exportData.map(d => [
+            d.name || '',
+            d.cost || '',
+            d.costType || '',
+            d.sla || '',
+            d.quality || '',
+            d.feeling || '',
+            d.note || '',
+            d.engagement || '',
+            d.penalty || '',
+            d.cancelDelay || '',
+            d.extraCosts ? JSON.stringify(d.extraCosts) : ''
+        ].map(x => (typeof x === 'string' && x.includes(';')) ? '"'+x.replace(/"/g,'""')+'"' : x));
+        const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+        // Copier dans le presse-papiers
+        navigator.clipboard.writeText(csv).then(() => {
+            alert('Données copiées dans le presse-papiers !');
+        }, () => {
+            alert('Erreur lors de la copie des données.');
         });
-        input.click();
     });
 
     // --- Contract type dropdown and tips logic ---
@@ -323,14 +233,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Load contract types from data.csv
-    fetch('data.csv')
-        .then(r => r.text())
-        .then(text => {
-            contractTypeData = parseCSV(text);
-            contractTypeSelect.innerHTML = '<option value="">-- Choisir un type --</option>' +
-                contractTypeData.map(d => `<option value="${d.type}">${d.type}</option>`).join('');
-        });
+    // Chargement des types de contrats depuis data.csv et remplissage du datalist
+    function loadContractTypes() {
+        fetch('data.csv')
+            .then(response => response.text())
+            .then(text => {
+                const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+                const header = lines[0].split(';');
+                const typeIdx = header.indexOf('type');
+                const tipsIdx = header.indexOf('tips');
+                const datalist = document.getElementById('contract-type-list');
+                datalist.innerHTML = '';
+                for (let i = 1; i < lines.length; i++) {
+                    const cols = lines[i].split(';');
+                    if (cols[typeIdx]) {
+                        const opt = document.createElement('option');
+                        opt.value = cols[typeIdx];
+                        datalist.appendChild(opt);
+                    }
+                }
+            });
+    }
+
+    // Affichage des tips si le type correspond à un modèle connu
+    function updateContractTypeTips() {
+        fetch('data.csv')
+            .then(response => response.text())
+            .then(text => {
+                const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+                const header = lines[0].split(';');
+                const typeIdx = header.indexOf('type');
+                const tipsIdx = header.indexOf('tips');
+                const input = document.getElementById('contract-type-input');
+                const tipsDiv = document.getElementById('contract-type-tips');
+                let found = false;
+                for (let i = 1; i < lines.length; i++) {
+                    const cols = lines[i].split(';');
+                    if (cols[typeIdx] && input.value.trim().toLowerCase() === cols[typeIdx].trim().toLowerCase()) {
+                        tipsDiv.textContent = cols[tipsIdx] || '';
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) tipsDiv.textContent = '';
+            });
+    }
 
     contractTypeSelect.addEventListener('change', () => {
         const type = contractTypeSelect.value;
@@ -395,6 +342,165 @@ document.addEventListener('DOMContentLoaded', () => {
         setupExtraCostHandlers(offerCard);
         nextOfferId++;
     });
+
+    // Chargement des types de contrats depuis data.csv
+    fetch('data.csv')
+        .then(r => r.text())
+        .then(text => {
+            contractTypeData = parseCSV(text);
+            contractTypeSelect.innerHTML = '<option value="">-- Choisir un type --</option>' +
+                contractTypeData.map(d => `<option value="${d.type}">${d.type}</option>`).join('');
+        });
+
+    // Chargement des types de contrats au démarrage
+    loadContractTypes();
+    const contractTypeInput = document.getElementById('contract-type-input');
+    contractTypeInput.addEventListener('input', updateContractTypeTips);
+
+    // --- Copier les données CSV dans le presse-papiers ---
+    const copyBtn = document.getElementById('copy-csv-btn');
+    const copyFeedback = document.getElementById('copy-feedback');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+            const offersData = getOffersData();
+            if (!offersData.length) {
+                copyFeedback.textContent = 'Aucune offre à copier.';
+                copyFeedback.style.display = 'block';
+                setTimeout(() => { copyFeedback.style.display = 'none'; }, 2000);
+                return;
+            }
+            // Générer le CSV (UTF-8, séparateur point-virgule)
+            const headers = ['Nom de l\'offre','Coût Total (€)','Type coût','Délai Interv. (h)','Score Matériel (/100)','Ressenti (/100)','Note','Engagement (mois)','Pénalités (€)','Préavis (jours)','Coûts supp. (JSON)'];
+            const rows = offersData.map(d => [
+                d.name || '',
+                d.cost || '',
+                d.costType || '',
+                d.sla || '',
+                d.quality || '',
+                d.feeling || '',
+                d.note || '',
+                d.engagement || '',
+                d.penalty || '',
+                d.cancelDelay || '',
+                d.extraCosts ? JSON.stringify(d.extraCosts) : ''
+            ].map(x => (typeof x === 'string' && x.includes(';')) ? '"'+x.replace(/"/g,'""')+'"' : x));
+            const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+            navigator.clipboard.writeText(csv).then(() => {
+                copyFeedback.textContent = 'Copié !';
+                copyFeedback.style.display = 'block';
+                setTimeout(() => { copyFeedback.style.display = 'none'; }, 2000);
+            }, () => {
+                copyFeedback.textContent = 'Erreur lors de la copie.';
+                copyFeedback.style.display = 'block';
+                setTimeout(() => { copyFeedback.style.display = 'none'; }, 2000);
+            });
+        });
+    }
+
+    // --- Affichage direct du CSV dans un champ texte non modifiable ---
+    function ensureCsvOutputTextarea() {
+        let csvOutput = document.getElementById('csv-output');
+        if (!csvOutput) {
+            csvOutput = document.createElement('textarea');
+            csvOutput.id = 'csv-output';
+            csvOutput.readOnly = true;
+            csvOutput.style.width = '100%';
+            csvOutput.style.minHeight = '120px';
+            csvOutput.style.marginTop = '10px';
+            // Cherche la section .results-actions ou la section .card correspondante
+            let resultsSection = document.querySelector('.results-actions');
+            if (resultsSection) {
+                // Ajoute après le paragraphe d'instructions si possible
+                const parentCard = resultsSection.closest('.card');
+                const infoPara = parentCard ? parentCard.querySelector('p') : null;
+                if (infoPara && !parentCard.querySelector('#csv-output')) {
+                    infoPara.insertAdjacentElement('afterend', csvOutput);
+                } else if (!parentCard.querySelector('#csv-output')) {
+                    resultsSection.parentNode.insertBefore(csvOutput, resultsSection.nextSibling);
+                }
+            } else {
+                // Fallback : ajoute à la fin du body
+                document.body.appendChild(csvOutput);
+            }
+        }
+        return csvOutput;
+    }
+
+    function updateCsvOutput() {
+        const csvOutput = ensureCsvOutputTextarea();
+        const offersData = getOffersData();
+        if (!offersData.length) {
+            csvOutput.value = '';
+            return;
+        }
+        const headers = ['Nom de l\'offre','Coût Total (€)','Type coût','Délai Interv. (h)','Score Matériel (/100)','Ressenti (/100)','Note','Engagement (mois)','Pénalités (€)','Préavis (jours)','Coûts supp. (JSON)'];
+        const rows = offersData.map(d => [
+            d.name || '',
+            d.cost || '',
+            d.costType || '',
+            d.sla || '',
+            d.quality || '',
+            d.feeling || '',
+            d.note || '',
+            d.engagement || '',
+            d.penalty || '',
+            d.cancelDelay || '',
+            d.extraCosts ? JSON.stringify(d.extraCosts) : ''
+        ].map(x => (typeof x === 'string' && x.includes(';')) ? '"'+x.replace(/"/g,'""')+'"' : x));
+        csvOutput.value = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+    }
+
+    // Mettre à jour le CSV à chaque modification
+    ['input','change'].forEach(evt => {
+        document.body.addEventListener(evt, e => {
+            if (e.target.closest('.offer-card') || e.target.closest('.grouped-offer-card')) {
+                updateCsvOutput();
+            }
+        });
+    });
+    // Mettre à jour aussi à l'initialisation
+    updateCsvOutput();
+
+    // --- Affichage des logs en temps réel en bas de page ---
+    (function setupLiveLog() {
+        let logDiv = document.getElementById('live-log');
+        if (!logDiv) {
+            logDiv = document.createElement('div');
+            logDiv.id = 'live-log';
+            logDiv.style.position = 'fixed';
+            logDiv.style.left = '0';
+            logDiv.style.right = '0';
+            logDiv.style.bottom = '0';
+            logDiv.style.background = 'rgba(30,30,30,0.95)';
+            logDiv.style.color = '#fff';
+            logDiv.style.fontSize = '15px';
+            logDiv.style.padding = '8px 18px';
+            logDiv.style.zIndex = '9999';
+            logDiv.style.maxHeight = '120px';
+            logDiv.style.overflowY = 'auto';
+            logDiv.style.fontFamily = 'monospace';
+            logDiv.style.display = 'none';
+            document.body.appendChild(logDiv);
+        }
+        function logMsg(msg, type = 'info') {
+            logDiv.style.display = 'block';
+            const color = type === 'error' ? '#ff5252' : (type === 'warn' ? '#ffd600' : '#b2ff59');
+            const prefix = type === 'error' ? '[ERREUR]' : type === 'warn' ? '[AVERT]' : '[INFO]';
+            const line = document.createElement('div');
+            line.innerHTML = `<span style="color:${color};font-weight:bold;">${prefix}</span> ${msg}`;
+            logDiv.appendChild(line);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            // Auto-hide after 10s for info, 20s for warn, never for error
+            if (type === 'info') setTimeout(() => { line.remove(); if (!logDiv.hasChildNodes()) logDiv.style.display = 'none'; }, 10000);
+            if (type === 'warn') setTimeout(() => { line.remove(); if (!logDiv.hasChildNodes()) logDiv.style.display = 'none'; }, 20000);
+        }
+        window.liveLog = logMsg;
+        window.onerror = function(msg, url, line, col, error) {
+            logMsg(`${msg} (${url}:${line})`, 'error');
+            return false;
+        };
+        // Pour usage dans le code : window.liveLog('message', 'info'|'warn'|'error')
+    })();
 
     console.log("Outil d'aide à la décision initialisé et prêt.");
 });

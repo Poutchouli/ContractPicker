@@ -2,61 +2,73 @@
 
 ![Image d'un tableau de bord d'analyse de données](https://placehold.co/800x200/0d6efd/FFFFFF?text=Outil+d'Aide+%C3%A0+la+D%C3%A9cision)
 
-<<<<<<< HEAD
-📈 Graphiques Multi-critères : Visualisez les résultats avec un classement par score (graphique à barres) et une comparaison des forces/faiblesses de chaque offre (graphique radar).
-=======
 ## 🎯 Description du Projet
 
-Cet outil est une application web locale conçue pour vous aider à prendre la meilleure décision lors du choix d'un contrat de service, particulièrement adapté pour les **copieurs d'entreprise**. Il transforme une tâche complexe et subjective en un processus d'analyse objectif et visuel, maintenant augmenté par l'intelligence artificielle.
->>>>>>> be100a087c9e04848d769d2267697d6176048921
+Cet outil est une application web locale, 100% côté client, pour saisir, normaliser, regrouper et exporter des offres de contrats (ex : copieurs, GED, etc). Il ne nécessite aucune installation serveur, aucun backend, ni PHP. Toutes les opérations (saisie, import/export CSV, regroupement) se font directement dans le navigateur.
 
 ## ✨ Fonctionnalités Clés
 
-* **📊 Scoring Pondéré :** Le cœur de l'outil. Chaque offre reçoit un score final basé sur 4 critères dont vous pouvez ajuster l'importance.
-* **🤖 Analyse par IA :** Intégrez votre clé API Gemini pour obtenir des conclusions et des recommandations détaillées basées sur vos données. Si aucune clé n'est fournie, une analyse automatique est générée.
-* **📈 Graphiques Multi-critères :** Visualisez les résultats avec un classement par score (graphique à barres) et une comparaison des forces/faiblesses de chaque offre (graphique radar).
-* **🤖 Assistance Intelligente :** Un questionnaire vous aide à identifier les coûts cachés et un mémo vous donne les "standards du marché".
-* **📈 Simulation d'Offre :** Générez une offre concurrente fictive mais plausible pour mieux évaluer les propositions réelles.
-* **🔗 Offres Groupées :** Regroupez plusieurs contrats en une seule méta-offre pour analyser des lots.
-* **🔄 Import / Export CSV :** Sauvegardez, partagez et transférez vos comparatifs facilement.
+* **📝 Saisie et Normalisation d'Offres :** Ajoutez, modifiez et regroupez vos offres de contrats, avec gestion des coûts supplémentaires et lots.
+* **📊 Export CSV en temps réel :** Toutes vos offres sont affichées en temps réel dans un champ texte CSV à copier/coller (aucun téléchargement de fichier, aucun backend, aucun bouton d'export).
+* **🔗 Groupement d'Offres :** Regroupez plusieurs offres en lots pour comparer des ensembles.
+* **🔄 Personnalisation des Types de Contrats :** Ajoutez/éditez les modèles et conseils via le fichier `data.csv`.
+* **💡 Interface Moderne et Simple :** Tout se fait dans le navigateur, sans dépendance serveur.
 
 ---
 
-## ⚖️ Le Système de Scoring : Explication Détaillée
+## 🚫 Fonctionnalités Supprimées
 
-L'interface utilise des icônes pour la pondération afin de rester discrète. Voici la signification de chaque critère :
-
-| Icône | Ce que ça représente vraiment | Comment ça marche ?                                                                                                                        |
-| :---: | :--------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
-|   🐖   | **Le Coût Total (Financier)**| Calcule le coût total de possession (TCO) sur la durée choisie. Un poids élevé favorisera l'offre **la moins chère**.                        |
-|  ⏱️   | **La Qualité du Service (SLA)** | Évalue la réactivité du service après-vente, basée sur le délai d'intervention (GTI). Un poids élevé favorisera le service **le plus rapide**.     |
-|  ⚙️   | **La Qualité du Matériel** | Se base sur un score objectif attribué à chaque modèle dans la base de données interne. Un poids élevé favorisera l'offre avec **le meilleur équipement**. |
-|  🤔   | **Votre Ressenti (Subjectif)**| Prend en compte votre propre évaluation (de 0 à 100) de chaque offre. Un poids élevé donnera plus d'importance à **votre intuition**.          |
+* **Aucun scoring, pondération, graphique ou analyse IA** : L'outil ne calcule plus de score, ne fait plus de classement, ni de graphiques. Il n'y a plus d'analyse automatique ou d'intégration IA.
+* **Aucun backend/PHP, aucun import/export par bouton** : Le fichier `export.php` est obsolète et n'est plus utilisé. L'export/import se fait uniquement via le champ texte CSV affiché en temps réel.
 
 ---
 
-## 🔑 Configuration de l'Analyse par IA (Gemini)
+## 🛠️ Utilisation
 
-<<<<<<< HEAD
-Le Coût Total (Financier)
+1. **Ouvrez `index.html` dans votre navigateur.**
+2. **Saisissez vos offres** : Ajoutez, modifiez, regroupez, ajoutez des coûts supplémentaires, etc.
+3. **Exportez vos offres** : Sélectionnez et copiez le texte CSV affiché en temps réel dans le champ prévu à cet effet (collez-le dans Excel, Google Sheets, etc).
+4. **Personnalisez les types de contrats** : Modifiez le fichier `data.csv` pour ajouter des modèles ou conseils.
 
-Calcule le coût total de possession (TCO) sur la durée choisie. Un poids élevé favorisera l'offre la moins chère.
+---
 
-La Qualité du Service (SLA)
+## 📁 Structure du Projet
 
-Évalue la réactivité du service après-vente, basée sur le délai d'intervention (GTI). Un poids élevé favorisera le service le plus rapide.
+- `index.html` : Interface principale (tout se passe ici)
+- `script.js` : Logique de gestion des offres, export CSV, etc.
+- `style.css` : Styles modernes
+- `data.csv` : Modèles/types de contrats et conseils (éditable)
+- `export.php` : **Obsolète, peut être supprimé**
 
-La Qualité du Matériel
+---
 
-Se base sur un score objectif attribué à chaque modèle dans la base de données interne. Un poids élevé favorisera l'offre avec le meilleur équipement.
+## ❓ FAQ
 
+**Q : Comment exporter mes offres ?** R : Sélectionnez et copiez le texte CSV affiché en temps réel dans le champ prévu à cet effet.
 
-Votre Ressenti (Subjectif)
+**Q : Comment importer des offres ?** R : Il n'y a plus d'import automatique. Collez vos données manuellement dans les champs si besoin.
 
-Prend en compte votre propre évaluation (de 0 à 100) de chaque offre. Un poids élevé donnera plus d'importance à votre intuition.
-=======
-1.  Cliquez sur l'icône **Paramètres IA** <i class="fa-solid fa-brain"></i> en haut de la page.
-2.  Obtenez une clé API depuis [Google AI Studio](https://aistudio.google.com/app/apikey).
-3.  Collez votre clé API dans le champ prévu à cet effet et enregistrez. La clé est sauvegardée localement dans votre navigateur.
-4.  Lancez une comparaison. L'analyse générée par l'IA apparaîtra dans la section des résultats.
->>>>>>> be100a087c9e04848d769d2267697d6176048921
+**Q : Dois-je installer un serveur ou du PHP ?** R : Non, tout fonctionne dans le navigateur. Ignorez/supprimez `export.php`.
+
+**Q : Puis-je personnaliser les types de contrats ?** R : Oui, éditez `data.csv` (séparateur `;`).
+
+---
+
+## 📝 Personnalisation
+
+- **Types de contrats et conseils** : Modifiez `data.csv` pour ajouter/supprimer des modèles ou conseils affichés dans l'interface.
+- **Champs d'offre** : Modifiez `index.html` et `script.js` si vous souhaitez ajouter des champs personnalisés.
+
+---
+
+## 🗑️ Suppression de l'ancien export PHP et import/export CSV
+
+Le fichier `export.php` n'est plus utilisé et peut être supprimé en toute sécurité. L'export/import se fait désormais uniquement via le champ texte CSV affiché en temps réel (aucun téléchargement de fichier, aucun backend, aucun bouton d'import/export).
+
+---
+
+## 📢 Remarques
+
+- L'outil fonctionne 100% hors-ligne, aucune donnée n'est envoyée sur Internet.
+- Compatible avec tous les navigateurs modernes.
+- Pour toute suggestion ou bug, ouvrez une issue sur le dépôt Git.
