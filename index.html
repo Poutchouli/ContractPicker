@@ -18,9 +18,8 @@
         <section class="card">
             <h2>1. Saisissez et Normalisez vos Offres</h2>
             <div class="contract-type-row" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;">
-                <label for="contract-type-select" style="font-weight:bold;">Type de contrat :</label>
-                <input list="contract-type-list" id="contract-type-input" placeholder="Choisissez ou saisissez un type..." style="min-width:200px;">
-                <datalist id="contract-type-list"></datalist>
+                <label for="contract-offername-input" style="font-weight:bold;">Nom de cette offre :</label>
+                <input id="contract-offername-input" placeholder="Saisissez un nom pour ce lot ou cette série d'offres..." style="min-width:200px;">
             </div>
             <div id="contract-type-tips" style="margin-bottom:10px;color:#1976d2;font-size:15px;"></div>
             <div id="offers-container">
@@ -29,6 +28,8 @@
                        <input type="checkbox" class="offer-group-checkbox" title="Sélectionner pour regrouper">
                        <input type="text" placeholder="Nom de l'offre (ex: Contrat A)" class="offer-name">
                        <button class="delete-offer-btn" title="Supprimer l'offre" aria-label="Supprimer l'offre">🗑️</button>
+                       <button class="clone-offer-btn" title="Cloner l'offre" aria-label="Cloner l'offre" style="margin-left:2px;">📄</button>
+                       <span class="offer-systime" style="margin-left:auto;font-size:13px;color:#888;"></span>
                     </div>
                     <div class="offer-inputs">
                         <input type="number" placeholder="Coût Total (€)" class="offer-cost">
@@ -73,19 +74,15 @@
                 <button id="group-offers-btn">Regrouper les offres sélectionnées</button>
             </div>
             <div id="offers-table-container" style="margin-top:24px;"></div>
+            <div id="offers-total-summary" style="position:fixed;right:32px;bottom:24px;min-width:320px;background:#f7f8fa;border:1.5px solid #b0bec5;border-radius:7px;padding:14px 18px;box-shadow:0 2px 8px rgba(60,60,60,0.08);font-size:16px;color:#263238;text-align:right;z-index:1001;"></div>
         </section>
         <section class="card">
-            <h2>2. EXPORT (CSV/xls)</h2>
-            <div class="results-actions">
-                <!-- plus de bouton copier -->
+            <h2>2. EXPORT (CSV)</h2>
+            <div class="results-actions" style="display:flex;gap:12px;margin-bottom:10px;">
+                <button type="button" id="export-csv-btn" style="background:#1976d2;">Exporter en CSV</button>
+                <input type="file" id="import-csv-input" accept=".csv" style="display:none;">
+                <button type="button" id="import-csv-btn" style="background:#388e3c;">Importer un CSV</button>
             </div>
-            <p style="color:#607d8b;font-size:15px;margin-top:10px;">Les données de vos offres s'affichent ci-dessous en CSV. Sélectionnez et copiez ce texte pour l'utiliser dans Excel, Google Sheets, etc.</p>
-            <textarea id="csv-preview" readonly style="width:100%;min-height:60px;margin:10px 0 0 0;font-size:13px;background:#f5f5f5;color:#333;border:1px solid #b0bec5;resize:vertical;"></textarea>
-            <form id="php-export-form" action="export.php" method="POST" target="_blank" style="margin-top:8px;">
-                <input type="hidden" name="csv" id="php-export-csv-input">
-                <button type="submit" id="php-export-btn" style="margin-top:8px;">Exporter en CSV (télécharger via PHP)</button>
-                <span style="color:#607d8b;font-size:13px;margin-left:8px;">(optionnel&nbsp;: téléchargement direct, nécessite PHP)</span>
-            </form>
         </section>
     </main>
     
