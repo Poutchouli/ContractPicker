@@ -561,7 +561,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Génération des données CSV/TSV en temps réel ---
     function renderRealtimeCsv() {
         const offers = getOffersDataWithSysdate();
-        if (!offers.length) { document.getElementById('realtime-csv-output').textContent = ''; return; }
+        const realtimeDiv = document.getElementById('realtime-csv-output');
+        const phpExportInput = document.getElementById('php-export-csv-input');
+        if (!offers.length) {
+            if (realtimeDiv) realtimeDiv.textContent = '';
+            if (phpExportInput) phpExportInput.value = '';
+            return;
+        }
         let headers = ['Nom de l\'offre','Coût Total (€)','Type coût','Délai Interv. (h)','Score Matériel','Ressenti','Note','Engagement (mois)','Pénalités (€)','Préavis (jours)'];
         for(let i=1;i<=10;i++) { headers.push(`Option ${i} (€)`, `Option ${i} (desc.)`); }
         headers.push('Date création');
@@ -575,7 +581,9 @@ document.addEventListener('DOMContentLoaded', () => {
             row.push(offer.sysdate||'');
             lines.push(row.join('\t'));
         }
-        document.getElementById('realtime-csv-output').textContent = lines.join('\n');
+        const csvString = lines.join('\n');
+        if (realtimeDiv) realtimeDiv.textContent = csvString;
+        if (phpExportInput) phpExportInput.value = csvString;
     }
 
     // --- Nouvelle fonction pour collecter les données avec sysdate et options fixes ---
