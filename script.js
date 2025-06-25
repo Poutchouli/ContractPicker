@@ -111,43 +111,50 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Fonctions utilitaires ---
     function getOffersData() {
         const data = [];
-        offersContainer.querySelectorAll('.offer-card:not(.hidden)').forEach(card => {
-            const name = card.querySelector('.offer-name').value || `Offre ${card.dataset.id}`;
-            const cost = parseFloat(card.querySelector('.offer-cost').value) || 0;
-            const costType = card.querySelector('.offer-cost-type').value;
+        offersContainer.querySelectorAll('.offer-card').forEach(card => {
+            if (card.classList.contains('hidden')) return; // skip hidden cards
+            const name = card.querySelector('.offer-name')?.value || '';
+            const cost = parseFloat(card.querySelector('.offer-cost')?.value) || 0;
+            const costType = card.querySelector('.offer-cost-type')?.value || 'one';
             let costTotal = convertToYearly(cost, 1, costType);
             // Extra costs
             const extraCosts = [];
             card.querySelectorAll('.extra-cost-row').forEach(row => {
-                const amount = parseFloat(row.querySelector('.extra-cost-amount').value) || 0;
-                const freq = parseInt(row.querySelector('.extra-cost-frequency').value) || 1;
-                const period = row.querySelector('.extra-cost-period').value;
-                const note = row.querySelector('.extra-cost-note').value || '';
+                const amount = parseFloat(row.querySelector('.extra-cost-amount')?.value) || 0;
+                const freq = parseInt(row.querySelector('.extra-cost-frequency')?.value) || 1;
+                const period = row.querySelector('.extra-cost-period')?.value || 'one';
+                const note = row.querySelector('.extra-cost-note')?.value || '';
                 extraCosts.push({ amount, frequency: freq, period, note });
                 costTotal += convertToYearly(amount, freq, period);
             });
-            const sla = parseFloat(card.querySelector('.offer-sla').value);
-            const quality = parseFloat(card.querySelector('.offer-quality').value);
-            const feeling = parseFloat(card.querySelector('.offer-feeling').value);
-            // New contract meta fields
+            const sla = parseFloat(card.querySelector('.offer-sla')?.value) || 0;
+            const quality = parseFloat(card.querySelector('.offer-quality')?.value) || 0;
+            const feeling = parseFloat(card.querySelector('.offer-feeling')?.value) || 0;
             const note = card.querySelector('.contract-note')?.value || '';
             const engagement = parseInt(card.querySelector('.contract-engagement')?.value) || 0;
             const penalty = parseFloat(card.querySelector('.contract-penalty')?.value) || 0;
             const cancelDelay = parseInt(card.querySelector('.contract-cancel-delay')?.value) || 0;
-            if (![sla, quality, feeling].some(isNaN)) {
+            // Ajoute même si certains champs sont vides, tant qu'il y a un nom ou un coût
+            if (name || costTotal > 0) {
                 data.push({ name, cost: costTotal, sla, quality, feeling, note, engagement, penalty, cancelDelay, extraCosts });
             }
         });
         offersContainer.querySelectorAll('.grouped-offer-card').forEach(card => {
-            const discount = parseFloat(card.querySelector('.lot-discount-input').value) || 0;
+            const discount = parseFloat(card.querySelector('.lot-discount-input')?.value) || 0;
+            const discountType = card.querySelector('.lot-discount-type')?.value || 'percent';
             const baseCost = parseFloat(card.dataset.baseCost);
-            const cost = baseCost * (1 - discount / 100);
+            let cost;
+            if (discountType === 'flat') {
+                cost = Math.max(0, baseCost - discount);
+            } else {
+                cost = baseCost * (1 - discount / 100);
+            }
             data.push({
-                name: card.querySelector('.lot-title').textContent,
+                name: card.querySelector('.lot-title')?.textContent || '',
                 cost: cost,
-                sla: parseFloat(card.dataset.baseSla),
-                quality: parseFloat(card.dataset.baseQuality),
-                feeling: parseFloat(card.dataset.baseFeeling)
+                sla: parseFloat(card.dataset.baseSla) || 0,
+                quality: parseFloat(card.dataset.baseQuality) || 0,
+                feeling: parseFloat(card.dataset.baseFeeling) || 0
             });
         });
         return data;
