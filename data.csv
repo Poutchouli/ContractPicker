@@ -1,5 +1,3 @@
 type;defaultName;defaultCost;defaultCostType;defaultSla;defaultQuality;defaultFeeling;defaultNote;defaultEngagement;defaultPenalty;defaultCancelDelay;tips
-Copieur couleur;Copieur Couleur Standard;1200;yearly;4;85;70;Inclut maintenance et toner;36;500;90;Vérifier le coût des consommables, la disponibilité du SAV, et la durée d'engagement.
-Copieur N&B;Copieur N&B Entrée de gamme;800;yearly;8;70;60;Attention au coût à la page;24;300;60;Comparer le coût à la page et la vitesse d'impression.
-Imprimante laser;Imprimante Laser Pro;350;yearly;2;80;75;Garantie 3 ans incluse;12;0;30;Vérifier la durée de garantie et le coût des toners.
-Maintenance IT;Contrat Maintenance IT;2000;yearly;2;90;80;Inclut support téléphonique;12;0;30;Vérifier la réactivité du support et les exclusions du contrat.
+COPIEUR LOCATION;Copieur en location;1000;yearly;4;80;70;Vérifier la maintenance incluse;36;500;90;Attention au coût à la page, durée d'engagement, et conditions de maintenance.
+SOLUTION GESTION AUTO DE DOCUMENT;Solution GED;2500;yearly;2;90;80;Inclut formation et support;24;0;60;Vérifier la compatibilité avec vos logiciels, la sécurité des données, et le support utilisateur.
