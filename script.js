@@ -405,6 +405,98 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCharts(results);
     });
 
+    // --- Contract type dropdown and tips logic ---
+    const contractTypeSelect = document.getElementById('contract-type-select');
+    const contractTypeTips = document.getElementById('contract-type-tips');
+    const addDefaultOfferBtn = document.getElementById('add-default-offer-btn');
+    let contractTypeData = [];
+
+    // Simple CSV parser for ; separated values
+    function parseCSV(text) {
+        const lines = text.split(/\r?\n/).filter(Boolean);
+        if (lines.length < 2) return [];
+        const headers = lines[0].split(';').map(h => h.trim());
+        return lines.slice(1).map(line => {
+            const values = line.split(';');
+            const obj = {};
+            headers.forEach((h, i) => obj[h] = values[i] || '');
+            return obj;
+        });
+    }
+
+    // Load contract types from data.csv
+    fetch('data.csv')
+        .then(r => r.text())
+        .then(text => {
+            contractTypeData = parseCSV(text);
+            contractTypeSelect.innerHTML = '<option value="">-- Choisir un type --</option>' +
+                contractTypeData.map(d => `<option value="${d.type}">${d.type}</option>`).join('');
+        });
+
+    contractTypeSelect.addEventListener('change', () => {
+        const type = contractTypeSelect.value;
+        const found = contractTypeData.find(d => d.type === type);
+        contractTypeTips.textContent = found && found.tips ? `Conseils : ${found.tips}` : '';
+    });
+
+    addDefaultOfferBtn.addEventListener('click', () => {
+        const type = contractTypeSelect.value;
+        if (!type) return;
+        const found = contractTypeData.find(d => d.type === type);
+        if (!found) return;
+        // Add a new offer pre-filled with defaults
+        const offerCard = document.createElement('div');
+        offerCard.className = 'offer-card';
+        offerCard.dataset.id = nextOfferId;
+        offerCard.innerHTML = `
+            <div class="offer-header">
+                <input type="checkbox" class="offer-group-checkbox" title="Sélectionner pour regrouper">
+                <input type="text" placeholder="Nom de l'offre (ex: Contrat A)" class="offer-name" value="${found.defaultName || type}">
+                <button class="delete-offer-btn" title="Supprimer l'offre" aria-label="Supprimer l'offre">🗑️</button>
+            </div>
+            <div class="offer-inputs">
+                <input type="number" placeholder="Coût Total (€)" class="offer-cost" value="${found.defaultCost || ''}">
+                <select class="offer-cost-type">
+                    <option value="one">Paiement unique</option>
+                    <option value="monthly"${found.defaultCostType==='monthly'?' selected':''}>Mensuel</option>
+                    <option value="quarterly"${found.defaultCostType==='quarterly'?' selected':''}>Trimestriel</option>
+                    <option value="yearly"${found.defaultCostType==='yearly'?' selected':''}>Annuel</option>
+                </select>
+                <input type="number" placeholder="Délai Interv. (heures)" class="offer-sla" value="${found.defaultSla || ''}">
+                <input type="number" placeholder="Score Matériel (/100)" class="offer-quality" value="${found.defaultQuality || ''}">
+                <input type="number" placeholder="Votre Ressenti (/100)" class="offer-feeling" value="${found.defaultFeeling || ''}">
+            </div>
+            <div class="contract-details">
+                <textarea class="contract-note" placeholder="Note sur le contrat (ex: particularités, remarques...)" rows="2">${found.defaultNote || ''}</textarea>
+                <div class="contract-meta">
+                    <input type="number" class="contract-engagement" min="0" placeholder="Durée d'engagement (mois)" value="${found.defaultEngagement || ''}">
+                    <input type="number" class="contract-penalty" min="0" placeholder="Pénalités de résiliation (€)" value="${found.defaultPenalty || ''}">
+                    <input type="number" class="contract-cancel-delay" min="0" placeholder="Préavis avant résiliation (jours)" value="${found.defaultCancelDelay || ''}">
+                </div>
+            </div>
+            <div class="extra-costs-list"></div>
+            <button class="add-extra-cost-btn" type="button">+ Ajouter un coût supplémentaire</button>
+            <template class="extra-cost-template">
+                <div class="extra-cost-row">
+                    <input type="number" class="extra-cost-amount" placeholder="Montant (€)">
+                    <input type="number" class="extra-cost-frequency" min="1" value="1" style="width:60px;" title="Fréquence">
+                    <select class="extra-cost-period">
+                        <option value="one">fois</option>
+                        <option value="monthly">/mois</option>
+                        <option value="quarterly">/trimestre</option>
+                        <option value="yearly">/an</option>
+                    </select>
+                    <input type="text" class="extra-cost-note" placeholder="Note (ex: maintenance, livraison...)" style="width:180px;">
+                    <button class="remove-extra-cost-btn" type="button" title="Supprimer">🗑️</button>
+                </div>
+            </template>
+        `;
+        offersContainer.appendChild(offerCard);
+        offerCard.querySelector('.delete-offer-btn').addEventListener('click', () => offerCard.remove());
+        setupExtraCostHandlers(offerCard);
+        nextOfferId++;
+    });
+
     // --- Fonctions existantes (getOffersData, convertToYearly, getWeights, calculateScores, updateCharts) ---
 
     function getOffersData() {

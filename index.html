@@ -66,6 +66,12 @@
 
         <section class="card">
             <h2>2. Renseignez les Offres</h2>
+            <div class="contract-type-row" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;">
+                <label for="contract-type-select" style="font-weight:bold;">Type de contrat :</label>
+                <select id="contract-type-select" style="min-width:200px;"></select>
+                <button id="add-default-offer-btn" type="button">Ajouter ce modèle</button>
+            </div>
+            <div id="contract-type-tips" style="margin-bottom:10px;color:#1976d2;font-size:15px;"></div>
             <div id="offers-container">
                 <div class="offer-card" data-id="1">
                     <div class="offer-header">
