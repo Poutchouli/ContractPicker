@@ -15,57 +15,7 @@
 
     <main class="container">
         <section class="card">
-            <h2>1. Ajustez l'Importance des Critères</h2>
-            <div class="weights">
-                <div class="weight-item">
-                    <label for="weight-cost">Coût Total (Financier)</label>
-                    <select id="weight-cost" class="weight-select">
-                        <option value="0">0 - Sans effet</option>
-                        <option value="1">1 - Très faible</option>
-                        <option value="2">2 - Faible</option>
-                        <option value="3">3 - Moyen</option>
-                        <option value="4" selected>4 - Fort</option>
-                        <option value="5">5 - Maximum</option>
-                    </select>
-                </div>
-                <div class="weight-item">
-                    <label for="weight-sla">Qualité du Service (SLA)</label>
-                    <select id="weight-sla" class="weight-select">
-                        <option value="0">0 - Sans effet</option>
-                        <option value="1">1 - Très faible</option>
-                        <option value="2">2 - Faible</option>
-                        <option value="3" selected>3 - Moyen</option>
-                        <option value="4">4 - Fort</option>
-                        <option value="5">5 - Maximum</option>
-                    </select>
-                </div>
-                <div class="weight-item">
-                    <label for="weight-quality">Qualité du Matériel</label>
-                    <select id="weight-quality" class="weight-select">
-                        <option value="0">0 - Sans effet</option>
-                        <option value="1">1 - Très faible</option>
-                        <option value="2">2 - Faible</option>
-                        <option value="3" selected>3 - Moyen</option>
-                        <option value="4">4 - Fort</option>
-                        <option value="5">5 - Maximum</option>
-                    </select>
-                </div>
-                <div class="weight-item">
-                    <label for="weight-feeling">Votre Ressenti (Subjectif)</label>
-                    <select id="weight-feeling" class="weight-select">
-                        <option value="0">0 - Sans effet</option>
-                        <option value="1">1 - Très faible</option>
-                        <option value="2">2 - Faible</option>
-                        <option value="3" selected>3 - Moyen</option>
-                        <option value="4">4 - Fort</option>
-                        <option value="5">5 - Maximum</option>
-                    </select>
-                </div>
-            </div>
-        </section>
-
-        <section class="card">
-            <h2>2. Renseignez les Offres</h2>
+            <h2>1. Saisissez et Normalisez vos Offres</h2>
             <div class="contract-type-row" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;">
                 <label for="contract-type-select" style="font-weight:bold;">Type de contrat :</label>
                 <select id="contract-type-select" style="min-width:200px;"></select>
@@ -122,23 +72,13 @@
                 <button id="group-offers-btn">Regrouper les offres sélectionnées</button>
             </div>
         </section>
-
         <section class="card">
-            <h2>3. Analysez les Résultats</h2>
+            <h2>2. Exporter ou Importer vos Offres</h2>
             <div class="results-actions">
-                <button id="calculate-btn">Calculer les Scores</button>
                 <button id="export-csv-btn">Exporter en CSV</button>
+                <!-- Le bouton d'import est ajouté dynamiquement par JS -->
             </div>
-            <div class="charts-container">
-                <div class="chart-wrapper">
-                    <h3>Classement par Score Final</h3>
-                    <canvas id="bar-chart"></canvas>
-                </div>
-                <div class="chart-wrapper">
-                    <h3>Comparatif Forces / Faiblesses</h3>
-                    <canvas id="radar-chart"></canvas>
-                </div>
-            </div>
+            <p style="color:#607d8b;font-size:15px;margin-top:10px;">Vous pouvez exporter vos offres pour les analyser ailleurs, ou réimporter un fichier pour continuer la saisie ou modifier des offres existantes.</p>
         </section>
     </main>
     

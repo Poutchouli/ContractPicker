@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const groupOffersBtn = document.getElementById('group-offers-btn');
     const offersContainer = document.getElementById('offers-container');
 
-    let barChart = null, radarChart = null;
     let nextOfferId = 2;
     let nextGroupId = 1;
 
@@ -164,77 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function getWeights() {
-        return {
-            cost: parseInt(document.getElementById('weight-cost').value),
-            sla: parseInt(document.getElementById('weight-sla').value),
-            quality: parseInt(document.getElementById('weight-quality').value),
-            feeling: parseInt(document.getElementById('weight-feeling').value),
-        };
-    }
-
-    function calculateScores(offers, weights) {
-        const costs = offers.map(o => o.cost);
-        const slas = offers.map(o => o.sla);
-        const minCost = Math.min(...costs);
-        const maxCost = Math.max(...costs);
-        const minSla = Math.min(...slas);
-        const maxSla = Math.max(...slas);
-        const normalize = (value, min, max, invert = false) => {
-            if (max === min) return 100;
-            const score = ((value - min) / (max - min)) * 100;
-            return invert ? 100 - score : score;
-        };
-        return offers.map(offer => {
-            const scoreCost = normalize(offer.cost, minCost, maxCost, true);
-            const scoreSla = normalize(offer.sla, minSla, maxSla, true);
-            const scoreQuality = offer.quality;
-            const scoreFeeling = offer.feeling;
-            const totalWeight = weights.cost + weights.sla + weights.quality + weights.feeling;
-            if (totalWeight === 0) return { ...offer, finalScore: 0, scores: { scoreCost, scoreSla, scoreQuality, scoreFeeling } };
-            const finalScore = ((scoreCost * weights.cost) + (scoreSla * weights.sla) + (scoreQuality * weights.quality) + (scoreFeeling * weights.feeling)) / totalWeight;
-            return { ...offer, finalScore, scores: { scoreCost, scoreSla, scoreQuality, scoreFeeling } };
-        });
-    }
-
-    function updateCharts(results) {
-        const barCtx = document.getElementById('bar-chart')?.getContext('2d');
-        const radarCtx = document.getElementById('radar-chart')?.getContext('2d');
-        if (!barCtx || !radarCtx) return;
-        if (barChart) barChart.destroy();
-        barChart = new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: results.map(r => r.name),
-                datasets: [{
-                    label: 'Score Final (/100)',
-                    data: results.map(r => r.finalScore.toFixed(2)),
-                    backgroundColor: 'rgba(0, 123, 255, 0.7)',
-                    borderColor: 'rgba(0, 123, 255, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
-        });
-        if (radarChart) radarChart.destroy();
-        radarChart = new Chart(radarCtx, {
-            type: 'radar',
-            data: {
-                labels: ['Coût', 'Service (SLA)', 'Matériel', 'Ressenti'],
-                datasets: results.map((r, index) => {
-                    const colors = ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)'];
-                    return {
-                        label: r.name,
-                        data: [r.scores.scoreCost, r.scores.scoreSla, r.scores.scoreQuality, r.scores.scoreFeeling].map(Number),
-                        backgroundColor: colors[index % colors.length],
-                        borderColor: colors[index % colors.length].replace('0.5', '1')
-                    };
-                })
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { display: true }, suggestedMin: 0, suggestedMax: 100 } } }
-        });
-    }
-
     // --- Export CSV ---
     exportBtn.addEventListener('click', () => {
         const offersData = getOffersData();
@@ -369,42 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
         input.click();
     });
 
-    // --- Calcul des scores ---
-    calculateBtn.addEventListener('click', () => {
-        const offersData = getOffersData();
-        if (offersData.length === 0) {
-            alert("Aucune offre valide à évaluer.");
-            return;
-        }
-        const weights = getWeights();
-        const results = calculateScores(offersData, weights);
-        // Affichage des résultats dans le tableau
-        const resultsTable = document.getElementById('results-table');
-        resultsTable.innerHTML = `
-            <tr>
-                <th>Offre</th>
-                <th>Coût (€)</th>
-                <th>Délai (h)</th>
-                <th>Qualité</th>
-                <th>Ressenti</th>
-                <th>Score Final</th>
-            </tr>
-        `;
-        results.forEach(r => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${r.name}</td>
-                <td>${r.cost.toFixed(2)}</td>
-                <td>${r.sla.toFixed(2)}</td>
-                <td>${r.quality.toFixed(2)}</td>
-                <td>${r.feeling.toFixed(2)}</td>
-                <td>${r.finalScore.toFixed(2)}</td>
-            `;
-            resultsTable.appendChild(row);
-        });
-        updateCharts(results);
-    });
-
     // --- Contract type dropdown and tips logic ---
     const contractTypeSelect = document.getElementById('contract-type-select');
     const contractTypeTips = document.getElementById('contract-type-tips');
@@ -496,133 +388,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setupExtraCostHandlers(offerCard);
         nextOfferId++;
     });
-
-    // --- Fonctions existantes (getOffersData, convertToYearly, getWeights, calculateScores, updateCharts) ---
-
-    function getOffersData() {
-        const data = [];
-        offersContainer.querySelectorAll('.offer-card:not(.hidden)').forEach(card => {
-            const name = card.querySelector('.offer-name').value || `Offre ${card.dataset.id}`;
-            const cost = parseFloat(card.querySelector('.offer-cost').value) || 0;
-            const costType = card.querySelector('.offer-cost-type').value;
-            let costTotal = convertToYearly(cost, 1, costType);
-            // Extra costs
-            const extraCosts = [];
-            card.querySelectorAll('.extra-cost-row').forEach(row => {
-                const amount = parseFloat(row.querySelector('.extra-cost-amount').value) || 0;
-                const freq = parseInt(row.querySelector('.extra-cost-frequency').value) || 1;
-                const period = row.querySelector('.extra-cost-period').value;
-                const note = row.querySelector('.extra-cost-note').value || '';
-                extraCosts.push({ amount, frequency: freq, period, note });
-                costTotal += convertToYearly(amount, freq, period);
-            });
-            const sla = parseFloat(card.querySelector('.offer-sla').value);
-            const quality = parseFloat(card.querySelector('.offer-quality').value);
-            const feeling = parseFloat(card.querySelector('.offer-feeling').value);
-            // New contract meta fields
-            const note = card.querySelector('.contract-note')?.value || '';
-            const engagement = parseInt(card.querySelector('.contract-engagement')?.value) || 0;
-            const penalty = parseFloat(card.querySelector('.contract-penalty')?.value) || 0;
-            const cancelDelay = parseInt(card.querySelector('.contract-cancel-delay')?.value) || 0;
-            if (![sla, quality, feeling].some(isNaN)) {
-                data.push({ name, cost: costTotal, sla, quality, feeling, note, engagement, penalty, cancelDelay, extraCosts });
-            }
-        });
-        offersContainer.querySelectorAll('.grouped-offer-card').forEach(card => {
-            const discount = parseFloat(card.querySelector('.lot-discount-input').value) || 0;
-            const baseCost = parseFloat(card.dataset.baseCost);
-            const cost = baseCost * (1 - discount / 100);
-            data.push({
-                name: card.querySelector('.lot-title').textContent,
-                cost: cost,
-                sla: parseFloat(card.dataset.baseSla),
-                quality: parseFloat(card.dataset.baseQuality),
-                feeling: parseFloat(card.dataset.baseFeeling)
-            });
-        });
-        return data;
-    }
-
-    function convertToYearly(amount, freq, period) {
-        switch(period) {
-            case 'monthly': return amount * freq * 12;
-            case 'quarterly': return amount * freq * 4;
-            case 'yearly': return amount * freq;
-            case 'one': return amount * freq;
-            default: return 0;
-        }
-    }
-
-    function getWeights() {
-        return {
-            cost: parseInt(document.getElementById('weight-cost').value),
-            sla: parseInt(document.getElementById('weight-sla').value),
-            quality: parseInt(document.getElementById('weight-quality').value),
-            feeling: parseInt(document.getElementById('weight-feeling').value),
-        };
-    }
-
-    function calculateScores(offers, weights) {
-        const costs = offers.map(o => o.cost);
-        const slas = offers.map(o => o.sla);
-        const minCost = Math.min(...costs);
-        const maxCost = Math.max(...costs);
-        const minSla = Math.min(...slas);
-        const maxSla = Math.max(...slas);
-        const normalize = (value, min, max, invert = false) => {
-            if (max === min) return 100;
-            const score = ((value - min) / (max - min)) * 100;
-            return invert ? 100 - score : score;
-        };
-        return offers.map(offer => {
-            const scoreCost = normalize(offer.cost, minCost, maxCost, true);
-            const scoreSla = normalize(offer.sla, minSla, maxSla, true);
-            const scoreQuality = offer.quality;
-            const scoreFeeling = offer.feeling;
-            const totalWeight = weights.cost + weights.sla + weights.quality + weights.feeling;
-            if (totalWeight === 0) return { ...offer, finalScore: 0, scores: { scoreCost, scoreSla, scoreQuality, scoreFeeling } };
-            const finalScore = ((scoreCost * weights.cost) + (scoreSla * weights.sla) + (scoreQuality * weights.quality) + (scoreFeeling * weights.feeling)) / totalWeight;
-            return { ...offer, finalScore, scores: { scoreCost, scoreSla, scoreQuality, scoreFeeling } };
-        });
-    }
-
-    function updateCharts(results) {
-        const barCtx = document.getElementById('bar-chart')?.getContext('2d');
-        const radarCtx = document.getElementById('radar-chart')?.getContext('2d');
-        if (!barCtx || !radarCtx) return;
-        if (barChart) barChart.destroy();
-        barChart = new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: results.map(r => r.name),
-                datasets: [{
-                    label: 'Score Final (/100)',
-                    data: results.map(r => r.finalScore.toFixed(2)),
-                    backgroundColor: 'rgba(0, 123, 255, 0.7)',
-                    borderColor: 'rgba(0, 123, 255, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
-        });
-        if (radarChart) radarChart.destroy();
-        radarChart = new Chart(radarCtx, {
-            type: 'radar',
-            data: {
-                labels: ['Coût', 'Service (SLA)', 'Matériel', 'Ressenti'],
-                datasets: results.map((r, index) => {
-                    const colors = ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)'];
-                    return {
-                        label: r.name,
-                        data: [r.scores.scoreCost, r.scores.scoreSla, r.scores.scoreQuality, r.scores.scoreFeeling].map(Number),
-                        backgroundColor: colors[index % colors.length],
-                        borderColor: colors[index % colors.length].replace('0.5', '1')
-                    };
-                })
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { display: true }, suggestedMin: 0, suggestedMax: 100 } } }
-        });
-    }
 
     console.log("Outil d'aide à la décision initialisé et prêt.");
 });
