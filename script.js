@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function getOffersData() {
         const data = [];
         offersContainer.querySelectorAll('.offer-card').forEach(card => {
-            if (card.classList.contains('hidden')) return; // skip hidden cards
+            if (card.classList.contains('hidden')) return;
             const name = card.querySelector('.offer-name')?.value || '';
             const cost = parseFloat(card.querySelector('.offer-cost')?.value) || 0;
             const costType = card.querySelector('.offer-cost-type')?.value || 'one';
@@ -397,90 +397,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Affichage direct du CSV dans un champ texte non modifiable ---
-    function ensureCsvOutputTextarea() {
-        let csvOutput = document.getElementById('csv-output');
-        if (!csvOutput) {
-            csvOutput = document.createElement('textarea');
-            csvOutput.id = 'csv-output';
-            csvOutput.readOnly = true;
-            csvOutput.style.width = '100%';
-            csvOutput.style.minHeight = '120px';
-            csvOutput.style.marginTop = '10px';
-            // Cherche la section .results-actions ou la section .card correspondante
-            let resultsSection = document.querySelector('.results-actions');
-            if (resultsSection) {
-                // Ajoute après le paragraphe d'instructions si possible
-                const parentCard = resultsSection.closest('.card');
-                const infoPara = parentCard ? parentCard.querySelector('p') : null;
-                if (infoPara && !parentCard.querySelector('#csv-output')) {
-                    infoPara.insertAdjacentElement('afterend', csvOutput);
-                } else if (!parentCard.querySelector('#csv-output')) {
-                    resultsSection.parentNode.insertBefore(csvOutput, resultsSection.nextSibling);
-                }
-            } else {
-                // Fallback : ajoute à la fin du body
-                document.body.appendChild(csvOutput);
-            }
-        }
-        return csvOutput;
-    }
-
-    function updateCsvOutput() {
-        const csvOutput = ensureCsvOutputTextarea();
-        const offersData = getOffersData();
-        if (!offersData.length) {
-            csvOutput.value = '';
-            return;
-        }
-        const headers = ['Nom de l\'offre','Coût Total (€)','Type coût','Délai Interv. (h)','Score Matériel (/100)','Ressenti (/100)','Note','Engagement (mois)','Pénalités (€)','Préavis (jours)','Coûts supp. (JSON)'];
-        const rows = offersData.map(d => [
-            d.name || '',
-            d.cost || '',
-            d.costType || '',
-            d.sla || '',
-            d.quality || '',
-            d.feeling || '',
-            d.note || '',
-            d.engagement || '',
-            d.penalty || '',
-            d.cancelDelay || '',
-            d.extraCosts ? JSON.stringify(d.extraCosts) : ''
-        ].map(x => (typeof x === 'string' && x.includes(';')) ? '"'+x.replace(/"/g,'""')+'"' : x));
-        csvOutput.value = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
-    }
-
-    // Mettre à jour le CSV à chaque modification
-    ['input','change'].forEach(evt => {
-        document.body.addEventListener(evt, e => {
-            if (e.target.closest('.offer-card') || e.target.closest('.grouped-offer-card')) {
-                updateCsvOutput();
-            }
-        });
-    });
-    // Mettre à jour aussi à l'initialisation
-    updateCsvOutput();
-
-    // --- Affichage des logs en temps réel en bas de page ---
+    // --- Affichage des logs en temps réel en haut de page ---
     (function setupLiveLog() {
         let logDiv = document.getElementById('live-log');
         if (!logDiv) {
             logDiv = document.createElement('div');
             logDiv.id = 'live-log';
             logDiv.style.position = 'fixed';
+            logDiv.style.top = '0';
             logDiv.style.left = '0';
             logDiv.style.right = '0';
-            logDiv.style.bottom = '0';
-            logDiv.style.background = 'rgba(30,30,30,0.95)';
+            logDiv.style.background = 'rgba(30,30,30,0.97)';
             logDiv.style.color = '#fff';
             logDiv.style.fontSize = '15px';
             logDiv.style.padding = '8px 18px';
-            logDiv.style.zIndex = '9999';
-            logDiv.style.maxHeight = '120px';
+            logDiv.style.zIndex = '2000';
+            logDiv.style.maxHeight = '90px';
             logDiv.style.overflowY = 'auto';
             logDiv.style.fontFamily = 'monospace';
             logDiv.style.display = 'none';
-            document.body.appendChild(logDiv);
+            document.body.prepend(logDiv);
         }
         function logMsg(msg, type = 'info') {
             logDiv.style.display = 'block';
@@ -499,7 +435,6 @@ document.addEventListener('DOMContentLoaded', () => {
             logMsg(`${msg} (${url}:${line})`, 'error');
             return false;
         };
-        // Pour usage dans le code : window.liveLog('message', 'info'|'warn'|'error')
     })();
 
     console.log("Outil d'aide à la décision initialisé et prêt.");
