@@ -1,25 +1,56 @@
 /* style.css */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f4f7f9;
-    color: #333;
+    background-color: #eceff1;
+    color: #222;
     margin: 0;
     padding: 20px;
 }
 .container { max-width: 1200px; margin: 0 auto; display: grid; gap: 20px; }
-.card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-h1, h2, h3 { color: #1a253c; }
-button { background-color: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s; }
-button:hover { background-color: #0056b3; }
-#add-offer-btn { background-color: #28a745; }
-#add-offer-btn:hover { background-color: #218838; }
-#group-offers-btn { background-color: #ffc107; color: #212529;}
-#group-offers-btn:hover { background-color: #e0a800; }
-input[type="text"], input[type="number"] { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+.card {
+    background: #f7f8fa;
+    padding: 22px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(60,60,60,0.08);
+    border: 1.5px solid #cfd8dc;
+}
+h1, h2, h3 { color: #263238; }
+button {
+    background-color: #607d8b;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+button:hover { background-color: #455a64; }
+#add-offer-btn { background-color: #388e3c; }
+#add-offer-btn:hover { background-color: #256029; }
+#group-offers-btn { background-color: #b0bec5; color: #263238;}
+#group-offers-btn:hover { background-color: #90a4ae; }
+input[type="text"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1.5px solid #b0bec5;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background: #f5f6f7;
+    color: #263238;
+}
 .weights { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
 .weight-item { display: flex; flex-direction: column; }
-.weight-item label { margin-bottom: 5px; font-weight: bold; }
-.offer-card { border: 1px solid #eee; border-radius: 5px; padding: 15px; margin-bottom: 15px; }
+.weight-item label { margin-bottom: 5px; font-weight: bold; color: #37474f; }
+.offer-card {
+    border: 1.5px solid #b0bec5;
+    border-radius: 7px;
+    background: #f3f4f6;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 4px rgba(60,60,60,0.06);
+}
 .offer-header { display: flex; align-items: center; gap: 10px; }
 .offer-header .offer-group-checkbox { width: auto; margin: 0; }
 .offer-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px; }
@@ -31,9 +62,9 @@ input[type="text"], input[type="number"] { width: 100%; padding: 8px; margin: 5p
 .hidden { display: none !important; }
 
 .grouped-offer-card {
-    border: 2px dashed #007bff;
-    background-color: #f0f8ff;
-    border-radius: 5px;
+    border: 2px dashed #607d8b;
+    background-color: #eceff1;
+    border-radius: 7px;
     padding: 15px;
     margin-bottom: 15px;
 }
@@ -46,8 +77,47 @@ input[type="text"], input[type="number"] { width: 100%; padding: 8px; margin: 5p
 }
 .lot-discount { display: flex; align-items: center; gap: 10px; }
 .lot-discount-input { max-width: 150px; }
-.lot-discount .ungroup-btn { background-color: #dc3545; }
-.lot-discount .ungroup-btn:hover { background-color: #c82333; }
+.lot-discount .ungroup-btn { background-color: #c62828; }
+.lot-discount .ungroup-btn:hover { background-color: #8e0000; }
 
+.contract-details textarea {
+    background: #f5f6f7;
+    border: 1.5px solid #b0bec5;
+    color: #263238;
+}
+.contract-meta {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+.extra-costs-list {
+    margin-top: 10px;
+}
+.extra-cost-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+    background: #eceff1;
+    border-radius: 4px;
+    padding: 6px 8px;
+    border: 1px solid #b0bec5;
+}
+.extra-cost-row input, .extra-cost-row select {
+    background: #f5f6f7;
+    border: 1.5px solid #b0bec5;
+    color: #263238;
+}
+.extra-cost-row .remove-extra-cost-btn {
+    background: #b0bec5;
+    color: #263238;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 18px;
+}
+.extra-cost-row .remove-extra-cost-btn:hover {
+    background: #c62828;
+    color: #fff;
+}
 
 @media (max-width: 900px) { .charts-container { grid-template-columns: 1fr; } }

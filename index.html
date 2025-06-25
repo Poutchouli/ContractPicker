@@ -19,23 +19,47 @@
             <div class="weights">
                 <div class="weight-item">
                     <label for="weight-cost">Coût Total (Financier)</label>
-                    <input type="range" id="weight-cost" min="0" max="100" value="25">
-                    <span id="weight-cost-value">25%</span>
+                    <select id="weight-cost" class="weight-select">
+                        <option value="0">0 - Sans effet</option>
+                        <option value="1">1 - Très faible</option>
+                        <option value="2">2 - Faible</option>
+                        <option value="3">3 - Moyen</option>
+                        <option value="4" selected>4 - Fort</option>
+                        <option value="5">5 - Maximum</option>
+                    </select>
                 </div>
                 <div class="weight-item">
                     <label for="weight-sla">Qualité du Service (SLA)</label>
-                    <input type="range" id="weight-sla" min="0" max="100" value="25">
-                    <span id="weight-sla-value">25%</span>
+                    <select id="weight-sla" class="weight-select">
+                        <option value="0">0 - Sans effet</option>
+                        <option value="1">1 - Très faible</option>
+                        <option value="2">2 - Faible</option>
+                        <option value="3" selected>3 - Moyen</option>
+                        <option value="4">4 - Fort</option>
+                        <option value="5">5 - Maximum</option>
+                    </select>
                 </div>
                 <div class="weight-item">
                     <label for="weight-quality">Qualité du Matériel</label>
-                    <input type="range" id="weight-quality" min="0" max="100" value="25">
-                    <span id="weight-quality-value">25%</span>
+                    <select id="weight-quality" class="weight-select">
+                        <option value="0">0 - Sans effet</option>
+                        <option value="1">1 - Très faible</option>
+                        <option value="2">2 - Faible</option>
+                        <option value="3" selected>3 - Moyen</option>
+                        <option value="4">4 - Fort</option>
+                        <option value="5">5 - Maximum</option>
+                    </select>
                 </div>
                 <div class="weight-item">
                     <label for="weight-feeling">Votre Ressenti (Subjectif)</label>
-                    <input type="range" id="weight-feeling" min="0" max="100" value="25">
-                    <span id="weight-feeling-value">25%</span>
+                    <select id="weight-feeling" class="weight-select">
+                        <option value="0">0 - Sans effet</option>
+                        <option value="1">1 - Très faible</option>
+                        <option value="2">2 - Faible</option>
+                        <option value="3" selected>3 - Moyen</option>
+                        <option value="4">4 - Fort</option>
+                        <option value="5">5 - Maximum</option>
+                    </select>
                 </div>
             </div>
         </section>
@@ -47,13 +71,44 @@
                     <div class="offer-header">
                        <input type="checkbox" class="offer-group-checkbox" title="Sélectionner pour regrouper">
                        <input type="text" placeholder="Nom de l'offre (ex: Contrat A)" class="offer-name">
+                       <button class="delete-offer-btn" title="Supprimer l'offre" aria-label="Supprimer l'offre">🗑️</button>
                     </div>
                     <div class="offer-inputs">
                         <input type="number" placeholder="Coût Total (€)" class="offer-cost">
+                        <select class="offer-cost-type">
+                            <option value="one">Paiement unique</option>
+                            <option value="monthly">Mensuel</option>
+                            <option value="quarterly">Trimestriel</option>
+                            <option value="yearly">Annuel</option>
+                        </select>
                         <input type="number" placeholder="Délai Interv. (heures)" class="offer-sla">
                         <input type="number" placeholder="Score Matériel (/100)" class="offer-quality">
                         <input type="number" placeholder="Votre Ressenti (/100)" class="offer-feeling">
                     </div>
+                    <div class="contract-details">
+                        <textarea class="contract-note" placeholder="Note sur le contrat (ex: particularités, remarques...)" rows="2"></textarea>
+                        <div class="contract-meta">
+                            <input type="number" class="contract-engagement" min="0" placeholder="Durée d'engagement (mois)">
+                            <input type="number" class="contract-penalty" min="0" placeholder="Pénalités de résiliation (€)">
+                            <input type="number" class="contract-cancel-delay" min="0" placeholder="Préavis avant résiliation (jours)">
+                        </div>
+                    </div>
+                    <div class="extra-costs-list"></div>
+                    <button class="add-extra-cost-btn" type="button">+ Ajouter un coût supplémentaire</button>
+                    <template class="extra-cost-template">
+                        <div class="extra-cost-row">
+                            <input type="number" class="extra-cost-amount" placeholder="Montant (€)">
+                            <input type="number" class="extra-cost-frequency" min="1" value="1" style="width:60px;" title="Fréquence">
+                            <select class="extra-cost-period">
+                                <option value="one">fois</option>
+                                <option value="monthly">/mois</option>
+                                <option value="quarterly">/trimestre</option>
+                                <option value="yearly">/an</option>
+                            </select>
+                            <input type="text" class="extra-cost-note" placeholder="Note (ex: maintenance, livraison...)" style="width:180px;">
+                            <button class="remove-extra-cost-btn" type="button" title="Supprimer">🗑️</button>
+                        </div>
+                    </template>
                 </div>
             </div>
             <div class="offer-actions">
@@ -91,12 +146,54 @@
                 <span>Ressenti: <strong class="lot-feeling"></strong>/100</span>
             </div>
             <div class="lot-discount">
-                <input type="number" class="lot-discount-input" placeholder="Remise (%)" min="0" max="100">
+                <input type="number" class="lot-discount-input" placeholder="Remise" min="0" style="width:90px;">
+                <select class="lot-discount-type" style="width:60px;">
+                    <option value="percent">%</option>
+                    <option value="flat">€</option>
+                </select>
                 <button class="ungroup-btn">Dissocier</button>
             </div>
         </div>
     </template>
 
     <script src="script.js"></script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
 </body>
 </html>
