@@ -19,7 +19,6 @@
                 <label for="contract-type-select" style="font-weight:bold;">Type de contrat :</label>
                 <input list="contract-type-list" id="contract-type-input" placeholder="Choisissez ou saisissez un type..." style="min-width:200px;">
                 <datalist id="contract-type-list"></datalist>
-                <button id="add-default-offer-btn" type="button">Ajouter ce modèle</button>
             </div>
             <div id="contract-type-tips" style="margin-bottom:10px;color:#1976d2;font-size:15px;"></div>
             <div id="offers-container">
@@ -79,6 +78,11 @@
             </div>
             <p style="color:#607d8b;font-size:15px;margin-top:10px;">Les données de vos offres s'affichent ci-dessous en CSV. Sélectionnez et copiez ce texte pour l'utiliser dans Excel, Google Sheets, etc.</p>
             <!-- Le textarea CSV sera injecté par JS -->
+            <form id="php-export-form" action="export.php" method="POST" target="_blank" style="margin-top:16px;">
+                <input type="hidden" name="csv" id="php-export-csv-input">
+                <button type="submit" id="php-export-btn" style="margin-top:8px;">Exporter en CSV (télécharger via PHP)</button>
+                <span style="color:#607d8b;font-size:13px;margin-left:8px;">(optionnel&nbsp;: téléchargement direct, nécessite PHP)</span>
+            </form>
         </section>
     </main>
     

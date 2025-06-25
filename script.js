@@ -503,4 +503,26 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
 
     console.log("Outil d'aide à la décision initialisé et prêt.");
+
+    // --- Export PHP (téléchargement direct) ---
+    function setupPhpExport() {
+        const form = document.getElementById('php-export-form');
+        const csvInput = document.getElementById('php-export-csv-input');
+        const exportBtn = document.getElementById('php-export-btn');
+        if (!form || !csvInput || !exportBtn) return;
+        // Affiche le bouton si export.php existe (optionnel)
+        fetch('export.php', {method:'HEAD'}).then(resp => {
+            if (resp.ok) form.style.display = '';
+        });
+        exportBtn.addEventListener('click', function(e) {
+            const csvOutput = document.getElementById('csv-output');
+            if (!csvOutput || !csvOutput.value.trim()) {
+                e.preventDefault();
+                window.liveLog('Aucune donnée à exporter.', 'warn');
+                return false;
+            }
+            csvInput.value = csvOutput.value;
+        });
+    }
+    setupPhpExport();
 });
