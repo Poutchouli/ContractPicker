@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Picker</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #1976d2;
+        }
+        .redirect-message {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+        .redirect-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            background-color: #1976d2;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .redirect-btn:hover {
+            background-color: #1565c0;
+        }
+    </style>
+    <script>
+        // After a short delay, redirect to the application
+        setTimeout(function() {
+            window.location.href = 'contratWriter/';
+        }, 1500);
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Contract Picker</h1>
+    </header>
+    
+    <main>
+        <div class="redirect-message">
+            <p>Vous allez être redirigé vers l'application en quelques secondes...</p>
+            <p>Si la redirection automatique ne fonctionne pas, cliquez sur le bouton ci-dessous :</p>
+            <a href="contratWriter/" class="redirect-btn">Accéder à l'application</a>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2023 Contract Picker - Application de comparaison de contrats</p>
+    </footer>
+</body>
+</html>

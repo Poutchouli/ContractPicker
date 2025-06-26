@@ -6,6 +6,28 @@ body {
     margin: 0;
     padding: 20px;
 }
+
+/* Barre d'outils */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.toolbar-btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .container { max-width: 1200px; margin: 0 auto; display: grid; gap: 20px; }
 .card {
     background: #f7f8fa;
@@ -230,26 +252,23 @@ input[type="text"], input[type="number"], select, textarea {
 /* Styles pour la liste des champs */
 .template-field-list {
     margin-bottom: 15px;
-    max-height: 400px;
-    overflow-y: auto;
 }
 
 .template-field-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px;
-    background: #eceff1;
-    border-radius: 5px;
-    border: 1.5px solid #b0bec5;
     margin-bottom: 8px;
+    padding: 12px;
+    background-color: #eceff1;
+    border-radius: 5px;
+    border: 1px solid #b0bec5;
 }
 
 .field-move-handle {
     cursor: grab;
-    color: #607d8b;
-    font-size: 20px;
-    padding: 0 8px;
+    font-size: 18px;
+    color: #90a4ae;
 }
 
 .field-move-handle:active {
@@ -258,33 +277,33 @@ input[type="text"], input[type="number"], select, textarea {
 
 .template-field-item input,
 .template-field-item select {
-    padding: 8px;
-    border-radius: 4px;
+    padding: 6px 10px;
+    border: 1px solid #b0bec5;
+    border-radius: 3px;
 }
 
 .field-label {
-    flex: 2;
+    flex: 3;
 }
 
 .field-type {
-    width: 140px;
+    flex: 1;
 }
 
 .field-placeholder {
-    flex: 2;
+    flex: 3;
 }
 
 .field-options {
-    flex: 2;
+    flex: 3;
 }
 
 .delete-field-btn {
-    background: transparent;
-    color: #b0bec5;
+    background: none;
     border: none;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
-    padding: 0 8px;
+    padding: 0 5px;
 }
 
 .delete-field-btn:hover {
@@ -294,7 +313,7 @@ input[type="text"], input[type="number"], select, textarea {
 /* Styles pour les sections sauvegarde/chargement */
 .template-save-section,
 .template-load-section {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .template-save-form {
@@ -308,18 +327,18 @@ input[type="text"], input[type="number"], select, textarea {
 }
 
 .saved-templates-list {
-    background: #eceff1;
+    background-color: #eceff1;
+    border: 1px solid #b0bec5;
     border-radius: 5px;
-    border: 1.5px solid #b0bec5;
-    max-height: 200px;
+    max-height: 300px;
     overflow-y: auto;
-    margin-bottom: 15px;
 }
 
 .saved-template-item {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 10px 15px;
+    padding: 12px 15px;
     border-bottom: 1px solid #b0bec5;
 }
 
@@ -333,7 +352,9 @@ input[type="text"], input[type="number"], select, textarea {
 
 .template-actions {
     display: flex;
+    justify-content: flex-end;
     gap: 10px;
+    margin-top: 15px;
 }
 
 /* Styles pour les boutons spécifiques */
@@ -364,38 +385,32 @@ input[type="text"], input[type="number"], select, textarea {
 }
 
 #add-field-btn {
-    background-color: #1976d2;
+    background-color: #388e3c;
 }
 
 #reset-fields-btn {
-    background-color: #ff7043;
+    background-color: #f57c00;
 }
 
 #reset-fields-btn:hover {
-    background-color: #e64a19;
+    background-color: #ef6c00;
 }
 
 .template-load-actions {
     display: flex;
-    gap: 8px;
+    gap: 5px;
 }
 
 .load-template-btn {
     background-color: #1976d2;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 14px;
 }
 
 .delete-template-btn {
-    background-color: #c62828;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
+    background-color: #e53935;
+    padding: 4px 8px;
+    font-size: 14px;
 }
 
 /* Styles pour le sélecteur d'icônes */
@@ -430,112 +445,97 @@ input[type="text"], input[type="number"], select, textarea {
 
 .icon-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 8px;
+    margin-bottom: 15px;
 }
 
 .icon-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     font-size: 24px;
-    border: 2px solid #eceff1;
-    border-radius: 8px;
+    background-color: #eceff1;
+    border: 1px solid #b0bec5;
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
 .icon-item:hover {
-    background-color: #eceff1;
-    transform: scale(1.05);
+    background-color: #e1f5fe;
+    border-color: #4fc3f7;
 }
 
 .icon-item.selected {
+    background-color: #bbdefb;
     border-color: #1976d2;
-    background-color: #e3f2fd;
 }
 
 .upload-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border: 2px dashed #b0bec5;
-    border-radius: 8px;
+    margin-top: 15px;
+    text-align: center;
 }
 
 .secondary-btn {
-    background-color: #eceff1;
-    color: #455a64;
-    border: 1px solid #b0bec5;
-    padding: 10px 15px;
-    border-radius: 5px;
+    background-color: #90a4ae;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
-    transition: all 0.2s;
 }
 
 .secondary-btn:hover {
-    background-color: #cfd8dc;
+    background-color: #607d8b;
 }
 
 #selected-icon-preview {
-    margin-top: 20px;
-    max-width: 100px;
-    max-height: 100px;
+    text-align: center;
+    margin: 15px 0;
+    font-size: 48px;
 }
 
 #selected-icon-preview img {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 8px;
-    border: 1px solid #b0bec5;
+    max-width: 48px;
+    max-height: 48px;
 }
 
 /* Styles pour les icônes dans la liste des templates et contrats */
 .template-icon, .offer-icon {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    font-size: 18px;
-    margin-right: 10px;
-    border-radius: 4px;
+    width: 24px;
+    height: 24px;
     background-color: #eceff1;
+    border: 1px solid #b0bec5;
+    border-radius: 4px;
     cursor: pointer;
+    overflow: hidden;
 }
 
 .template-icon:hover, .offer-icon:hover {
-    background-color: #e3f2fd;
+    background-color: #e1f5fe;
+    border-color: #4fc3f7;
 }
 
 .template-icon img, .offer-icon img {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 4px;
+    max-width: 90%;
+    max-height: 90%;
 }
 
 /* Bouton d'icône dans les forms */
 .icon-btn {
-    background: transparent;
+    background: none;
     border: none;
-    color: #455a64;
-    font-size: 24px;
+    font-size: 18px;
     cursor: pointer;
-    padding: 5px;
-    border-radius: 4px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
+    padding: 0 5px;
 }
 
 .icon-btn:hover {
-    background-color: #eceff1;
     color: #1976d2;
 }
 
@@ -543,18 +543,155 @@ input[type="text"], input[type="number"], select, textarea {
 .saved-template-item {
     display: flex;
     align-items: center;
-    padding: 10px 15px;
-    border-bottom: 1px solid #b0bec5;
+    gap: 10px;
 }
 
 .template-info {
     flex: 1;
-    display: flex;
-    align-items: center;
 }
 
 .offer-header {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+}
+
+/* Styles pour la console d'erreurs en temps réel */
+.error-console {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 320px;
+    background-color: rgba(40, 40, 40, 0.95);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    z-index: 2100;
+    font-family: 'Consolas', 'Monaco', monospace;
+    color: #f1f1f1;
+    transition: all 0.3s ease-in-out;
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0.95;
+    border: 1px solid rgba(70, 70, 70, 0.8);
+}
+
+.error-console:hover {
+    opacity: 1;
+    border: 1px solid rgba(100, 100, 100, 0.8);
+}
+
+.error-console.minimized {
+    max-height: 30px;
+    overflow: hidden;
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+.error-console-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    background-color: rgba(60, 60, 60, 0.8);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    cursor: move;
+    user-select: none;
+}
+
+.error-console-title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.error-console-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.error-console-controls button {
+    background: rgba(70, 70, 70, 0.6);
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
+    margin-left: 5px;
+    width: 25px;
+    height: 25px;
+}
+
+.error-console-controls button:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.error-console-minimize {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 14px;
+}
+
+.error-console-clear {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+.error-console-clear:hover {
+    opacity: 1;
+    background-color: rgba(220, 0, 0, 0.2);
+}
+
+.error-console-minimize:hover {
+    background-color: rgba(0, 120, 215, 0.2);
+}
+
+.error-console-content {
+    padding: 8px;
+    overflow-y: auto;
+    transition: max-height 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    max-height: 360px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.console-entry {
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 4px;
+}
+
+.console-entry:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.console-entry.error {
+    color: #ff5252;
+}
+
+.console-entry.warning {
+    color: #ffca28;
+}
+
+.console-entry.info {
+    color: #64b5f6;
+}
+
+.console-entry.success {
+    color: #81c784;
+}
+
+.console-timestamp {
+    font-size: 10px;
+    color: #999;
+    margin-right: 5px;
 }

@@ -4,15 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Outil d'Aide à la Décision Stratégique</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/extra-cost-section.css">
+    <link rel="stylesheet" href="css/dropdown.css">
 </head>
 <body>
 
     <header>
         <h1>Outil d'Aide à la Décision Stratégique pour Contrats</h1>
+        <div class="toolbar">
+            <button id="add-offer-btn" class="toolbar-btn">➕ Ajouter une offre</button>
+            <button id="group-offers-btn" class="toolbar-btn">🔗 Grouper les offres</button>
+            <div class="dropdown">
+                <button id="export-csv-btn" class="toolbar-btn">📤 Exporter</button>
+                <div class="dropdown-content">
+                    <a href="#" id="export-as-csv">Format CSV</a>
+                    <a href="#" id="export-as-json">Format JSON</a>
+                </div>
+            </div>
+            <button id="import-csv-btn" class="toolbar-btn">📥 Importer</button>
+            <input type="file" id="import-csv-input" accept=".csv,.json" style="display: none;">
+            <button id="template-manager-btn" class="toolbar-btn">📋 Gestion des templates</button>
+        </div>
     </header>
 
     <div id="live-log" style="position:fixed;top:0;left:0;right:0;background:rgba(30,30,30,0.97);color:#fff;font-size:15px;padding:8px 18px;z-index:2000;max-height:90px;overflow-y:auto;font-family:monospace;display:none;"></div>
+    
+    <div id="error-console" class="error-console">
+        <div class="error-console-header">
+            <div class="error-console-title">Console</div>
+            <div class="error-console-controls">
+                <button class="error-console-clear" title="Effacer">🗑️</button>
+                <button class="error-console-minimize" title="Réduire">_</button>
+            </div>
+        </div>
+        <div class="error-console-content">
+            <div class="error-console-logs"></div>
+        </div>
+    </div>
 
     <main class="container">
         <section class="card">
@@ -23,67 +52,38 @@
             </div>
             <div id="contract-type-tips" style="margin-bottom:10px;color:#1976d2;font-size:15px;"></div>
             <div id="offers-container">
-                <div class="offer-card" data-id="1">
-                    <div class="offer-header">
-                       <input type="checkbox" class="offer-group-checkbox" title="Sélectionner pour regrouper">
-                       <input type="text" placeholder="Nom de l'offre (ex: Contrat A)" class="offer-name">
-                       <button class="delete-offer-btn" title="Supprimer l'offre" aria-label="Supprimer l'offre">🗑️</button>
-                       <button class="clone-offer-btn" title="Cloner l'offre" aria-label="Cloner l'offre" style="margin-left:2px;">📄</button>
-                       <span class="offer-systime" style="margin-left:auto;font-size:13px;color:#888;"></span>
-                    </div>
-                    <div class="offer-inputs">
-                        <input type="number" placeholder="Coût Total (€)" class="offer-cost">
-                        <select class="offer-cost-type">
-                            <option value="one">Paiement unique</option>
-                            <option value="monthly">Mensuel</option>
-                            <option value="quarterly">Trimestriel</option>
-                            <option value="yearly">Annuel</option>
-                        </select>
-                        <input type="number" placeholder="Délai Interv. (heures)" class="offer-sla">
-                        <input type="number" placeholder="Score Matériel (/100)" class="offer-quality">
-                        <input type="number" placeholder="Votre Ressenti (/100)" class="offer-feeling">
-                    </div>
-                    <div class="contract-details">
-                        <textarea class="contract-note" placeholder="Note sur le contrat (ex: particularités, remarques...)" rows="2"></textarea>
-                        <div class="contract-meta">
-                            <input type="number" class="contract-engagement" min="0" placeholder="Durée d'engagement (mois)">
-                            <input type="number" class="contract-penalty" min="0" placeholder="Pénalités de résiliation (€)">
-                            <input type="number" class="contract-cancel-delay" min="0" placeholder="Préavis avant résiliation (jours)">
-                        </div>
-                    </div>
-                    <div class="extra-costs-list"></div>
-                    <button class="add-extra-cost-btn" type="button">+ Ajouter un coût supplémentaire</button>
-                    <template class="extra-cost-template">
-                        <div class="extra-cost-row">
-                            <input type="number" class="extra-cost-amount" placeholder="Montant (€)">
-                            <input type="number" class="extra-cost-frequency" min="1" value="1" style="width:60px;" title="Fréquence">
-                            <select class="extra-cost-period">
-                                <option value="one">fois</option>
-                                <option value="monthly">/mois</option>
-                                <option value="quarterly">/trimestre</option>
-                                <option value="yearly">/an</option>
-                            </select>
-                            <input type="text" class="extra-cost-note" placeholder="Note (ex: maintenance, livraison...)" style="width:180px;">
-                            <button class="remove-extra-cost-btn" type="button" title="Supprimer">🗑️</button>
-                        </div>
-                    </template>
-                </div>
-            </div>
-            <div class="offer-actions">
-                <button id="add-offer-btn">+ Ajouter une offre</button>
-                <button id="group-offers-btn">Regrouper les offres sélectionnées</button>
+                <!-- Les offres seront ajoutées dynamiquement ici -->
             </div>
             <div id="offers-table-container" style="margin-top:24px;"></div>
             <div id="offers-total-summary" style="position:fixed;right:32px;bottom:24px;min-width:320px;background:#f7f8fa;border:1.5px solid #b0bec5;border-radius:7px;padding:14px 18px;box-shadow:0 2px 8px rgba(60,60,60,0.08);font-size:16px;color:#263238;text-align:right;z-index:1001;"></div>
         </section>
-        <section class="card">
-            <h2>2. EXPORT (CSV)</h2>
-            <div class="results-actions" style="display:flex;gap:12px;margin-bottom:10px;">
-                <button type="button" id="export-csv-btn" style="background:#1976d2;">Exporter en CSV</button>
-                <input type="file" id="import-csv-input" accept=".csv" style="display:none;">
-                <button type="button" id="import-csv-btn" style="background:#388e3c;">Importer un CSV</button>
+        
+        <!-- Section des coûts supplémentaires déplacée avant l'export -->
+        <section class="card" id="extra-costs-section">
+            <h2>2. Gestion des Coûts Supplémentaires</h2>
+            <div id="extra-costs-container" class="extra-costs-container">
+                <!-- Les coûts supplémentaires seront ajoutés ici par le module extraCostManager -->
             </div>
+            <div class="extra-cost-actions">
+                <button id="add-extra-cost-section-btn" class="add-extra-cost-btn">+ Ajouter un coût supplémentaire</button>
+            </div>
+            <template class="extra-cost-template">
+                <div class="extra-cost-row">
+                    <input type="number" class="extra-cost-amount" placeholder="Montant (€)">
+                    <input type="number" class="extra-cost-frequency" min="1" value="1" style="width:60px;" title="Fréquence">
+                    <select class="extra-cost-period">
+                        <option value="one">fois</option>
+                        <option value="monthly">/mois</option>
+                        <option value="quarterly">/trimestre</option>
+                        <option value="yearly">/an</option>
+                    </select>
+                    <input type="text" class="extra-cost-note" placeholder="Note (ex: maintenance, livraison...)" style="width:180px;">
+                    <button class="remove-extra-cost-btn" type="button" title="Supprimer">🗑️</button>
+                </div>
+            </template>
         </section>
+        
+
     </main>
     
     <template id="grouped-offer-template">
@@ -108,6 +108,141 @@
 
     <div id="realtime-csv-output" style="position:fixed;left:0;right:0;bottom:0;background:#f7f7fa;color:#444;font-size:12px;padding:6px 18px;z-index:999;text-align:left;border-top:1px solid #b0bec5;max-height:90px;overflow:auto;white-space:pre;display:block;"></div>
 
-    <script src="script.js"></script>
+    <!-- Modal Template -->
+    <div id="template-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Gestionnaire de Templates</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="template-tabs">
+                    <button class="template-tab active" data-tab="edit-fields">Éditer les champs</button>
+                    <button class="template-tab" data-tab="save-load">Sauvegarder / Charger</button>
+                </div>
+                
+                <div id="edit-fields-tab" class="template-tab-content">
+                    <h3>Personnaliser les champs du template</h3>
+                    <div class="template-field-list">
+                        <!-- Liste dynamique des champs du template -->
+                    </div>
+                    <div class="template-actions">
+                        <button id="add-field-btn">+ Ajouter un champ</button>
+                        <button id="reset-fields-btn">Réinitialiser</button>
+                    </div>
+                </div>
+                
+                <div id="save-load-tab" class="template-tab-content" style="display:none;">
+                    <div class="template-save-section">
+                        <h3>Sauvegarder le template actuel</h3>
+                        <div class="template-save-form">
+                            <div style="display:flex;align-items:center;width:100%;">
+                                <div class="template-icon" id="template-icon-display" data-icon="📄">
+                                    <span>📄</span>
+                                </div>
+                                <input type="text" id="template-name-input" placeholder="Nom du template" style="flex-grow:1;">
+                            </div>
+                            <button id="select-template-icon-btn" class="secondary-btn" style="margin-right:10px;">Icône</button>
+                            <button id="save-template-btn">Sauvegarder</button>
+                        </div>
+                        <div class="template-export">
+                            <button id="export-template-csv-btn">Exporter en PNG</button>
+                        </div>
+                    </div>
+                    <div class="template-load-section">
+                        <h3>Charger un template</h3>
+                        <div class="saved-templates-list">
+                            <!-- Liste des templates sauvegardés -->
+                        </div>
+                        <div class="template-import">
+                            <input type="file" id="import-template-input" accept=".png" style="display:none;">
+                            <button id="import-template-btn">Importer depuis PNG</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="apply-template-btn">Appliquer ce template</button>
+                <button id="close-modal-btn">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template pour un champ de formulaire -->
+    <template id="template-field-item">
+        <div class="template-field-item">
+            <div class="field-move-handle">≡</div>
+            <input type="text" class="field-label" placeholder="Nom du champ">
+            <select class="field-type">
+                <option value="text">Texte</option>
+                <option value="number">Nombre</option>
+                <option value="select">Liste déroulante</option>
+                <option value="textarea">Zone de texte</option>
+            </select>
+            <input type="text" class="field-placeholder" placeholder="Texte d'aide">
+            <input type="text" class="field-options" placeholder="Options (pour liste)" style="display:none;">
+            <button class="delete-field-btn" title="Supprimer ce champ">🗑️</button>
+        </div>
+    </template>
+
+    <!-- Modal pour sélection d'icônes -->
+    <div id="icon-selector-modal" class="modal">
+        <div class="modal-content" style="max-width:600px;">
+            <div class="modal-header">
+                <h2>Sélectionner une icône</h2>
+                <span class="close-icon-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="icon-selector-tabs">
+                    <button class="icon-selector-tab active" data-tab="preset">Icônes prédéfinies</button>
+                    <button class="icon-selector-tab" data-tab="upload">Importer une image</button>
+                </div>
+                
+                <div id="preset-tab" class="icon-selector-tab-content">
+                    <div class="icon-grid">
+                        <!-- Icônes prédéfinies -->
+                        <div class="icon-item" data-icon="📄"><span>📄</span></div>
+                        <div class="icon-item" data-icon="📊"><span>📊</span></div>
+                        <div class="icon-item" data-icon="📈"><span>📈</span></div>
+                        <div class="icon-item" data-icon="💼"><span>💼</span></div>
+                        <div class="icon-item" data-icon="🏢"><span>🏢</span></div>
+                        <div class="icon-item" data-icon="🔧"><span>🔧</span></div>
+                        <div class="icon-item" data-icon="🛠️"><span>🛠️</span></div>
+                        <div class="icon-item" data-icon="💰"><span>💰</span></div>
+                        <div class="icon-item" data-icon="💵"><span>💵</span></div>
+                        <div class="icon-item" data-icon="💻"><span>💻</span></div>
+                        <div class="icon-item" data-icon="🔒"><span>🔒</span></div>
+                        <div class="icon-item" data-icon="📱"><span>📱</span></div>
+                        <div class="icon-item" data-icon="🏭"><span>🏭</span></div>
+                        <div class="icon-item" data-icon="🚚"><span>🚚</span></div>
+                        <div class="icon-item" data-icon="⚙️"><span>⚙️</span></div>
+                        <div class="icon-item" data-icon="📋"><span>📋</span></div>
+                        <div class="icon-item" data-icon="📝"><span>📝</span></div>
+                        <div class="icon-item" data-icon="📑"><span>📑</span></div>
+                        <div class="icon-item" data-icon="🔍"><span>🔍</span></div>
+                        <div class="icon-item" data-icon="📞"><span>📞</span></div>
+                        <div class="icon-item" data-icon="📨"><span>📨</span></div>
+                        <div class="icon-item" data-icon="🌐"><span>🌐</span></div>
+                        <div class="icon-item" data-icon="🔌"><span>🔌</span></div>
+                        <div class="icon-item" data-icon="🖥️"><span>🖥️</span></div>
+                    </div>
+                </div>
+                
+                <div id="upload-tab" class="icon-selector-tab-content" style="display:none;">
+                    <div class="upload-section">
+                        <input type="file" id="icon-upload" accept="image/*" style="display: none;">
+                        <button id="select-icon-file-btn" class="secondary-btn">Sélectionner une image</button>
+                        <div id="selected-icon-preview" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="apply-icon-btn">Appliquer</button>
+                <button id="cancel-icon-btn">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>

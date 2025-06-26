@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Serve ContractPicker App",
+			"type": "shell",
+			"command": "powershell -Command \"cd 'f:\\CODAGE\\GITS\\ContractPicker'; python -m http.server 8000\"",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}
