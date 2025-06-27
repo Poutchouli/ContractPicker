@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContractPicker Status</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        .test-result { margin: 5px 0; padding: 5px; }
+        .passed { color: green; }
+        .failed { color: red; }
+        #log { background: #f8f9fa; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>ContractPicker - System Status</h1>
+    
+    <div id="status-container">
+        <div class="status info">🔄 Initializing system check...</div>
+    </div>
+    
+    <h2>Template Manager Tests</h2>
+    <div id="test-results">
+        <div class="test-result">⏳ Waiting for tests to run...</div>
+    </div>
+    
+    <h2>System Log</h2>
+    <div id="log"></div>
+    
+    <script type="module">
+        // Import necessary modules
+        import { initTemplateManager, getCurrentTemplate, openSimpleTemplateEditor, setCurrentTemplate } from './js/modules/templateManager.js';
+        import { logInfo, logError, logWarning, logSuccess } from './js/utils/logger.js';
+        
+        const statusContainer = document.getElementById('status-container');
+        const testResults = document.getElementById('test-results');
+        const logContainer = document.getElementById('log');
+        
+        // Override console.log to display in our log
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const logEntry = args.join(' ');
+            logContainer.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${logEntry}</div>`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        };
+        
+        // Initialize system
+        async function initializeSystem() {
+            try {
+                console.log('🚀 Starting ContractPicker system initialization...');
+                
+                // Initialize template manager
+                await initTemplateManager();
+                console.log('✅ Template manager initialized');
+                
+                // Check global function availability
+                const requiredFunctions = [
+                    'openSimpleTemplateEditor',
+                    'setCurrentTemplate',
+                    'closeTemplateModal',
+                    'deleteTemplateWithConfirm'
+                ];
+                
+                let allAvailable = true;
+                let html = '<h3>Function Availability Check:</h3>';
+                
+                requiredFunctions.forEach(funcName => {
+                    const isAvailable = typeof window[funcName] === 'function';
+                    const statusText = isAvailable ? '✅' : '❌';
+                    const className = isAvailable ? 'passed' : 'failed';
+                    html += `<div class="test-result ${className}">${statusText} ${funcName}</div>`;
+                    console.log(`Function ${funcName}: ${isAvailable ? 'Available' : 'Not Available'}`);
+                    if (!isAvailable) allAvailable = false;
+                });
+                
+                statusContainer.innerHTML = allAvailable 
+                    ? '<div class="status success">✅ All systems operational</div>'
+                    : '<div class="status error">❌ Some functions missing</div>';
+                
+                // Run template manager tests if available
+                setTimeout(() => {
+                    if (window.runTemplateManagerTests) {
+                        console.log('🧪 Running template manager tests...');
+                        const results = window.runTemplateManagerTests();
+                        html += `<h3>Test Results:</h3>`;
+                        html += `<div class="test-result ${results.failed === 0 ? 'passed' : 'failed'}">`;
+                        html += `${results.passed} passed, ${results.failed} failed</div>`;
+                    } else {
+                        html += '<div class="test-result failed">❌ Template manager tests not available</div>';
+                        console.log('❌ Template manager tests not found');
+                    }
+                    
+                    testResults.innerHTML = html;
+                }, 1000);
+                
+            } catch (error) {
+                console.log(`❌ Error during initialization: ${error.message}`);
+                statusContainer.innerHTML = `<div class="status error">❌ Initialization failed: ${error.message}</div>`;
+            }
+        }
+        
+        // Start initialization
+        initializeSystem();
+    </script>
+    
+    <!-- Include template manager tests -->
+    <script src="js/utils/templateManagerTests.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Template Manager Test</title>
+</head>
+<body>
+    <h1>Template Manager Test</h1>
+    <div id="results"></div>
+    
+    <script type="module">
+        // Import the template manager directly
+        import { initTemplateManager, openSimpleTemplateEditor, setCurrentTemplate } from './js/modules/templateManager.js';
+        
+        // Initialize the template manager
+        initTemplateManager();
+        
+        // Wait a bit and then test
+        setTimeout(() => {
+            const results = document.getElementById('results');
+            
+            console.log('Testing global function availability...');
+            
+            // Test what functions are available
+            const tests = [
+                { name: 'openSimpleTemplateEditor', func: window.openSimpleTemplateEditor },
+                { name: 'setCurrentTemplate', func: window.setCurrentTemplate },
+                { name: 'closeTemplateModal', func: window.closeTemplateModal },
+                { name: 'deleteTemplateWithConfirm', func: window.deleteTemplateWithConfirm }
+            ];
+            
+            let html = '<h2>Function Availability Test Results:</h2><ul>';
+            
+            tests.forEach(test => {
+                const isAvailable = typeof test.func === 'function';
+                const status = isAvailable ? '✅ Available' : '❌ Not Available';
+                html += `<li><strong>${test.name}:</strong> ${status}</li>`;
+                console.log(`${test.name}: ${isAvailable ? 'Available' : 'Not Available'}`);
+            });
+            
+            html += '</ul>';
+            
+            // Try to run template manager tests if available
+            if (window.runTemplateManagerTests) {
+                console.log('Running template manager tests...');
+                const testResults = window.runTemplateManagerTests();
+                html += `<h2>Template Manager Tests:</h2><p>Passed: ${testResults.passed}, Failed: ${testResults.failed}</p>`;
+            } else {
+                html += '<h2>Template Manager Tests:</h2><p>runTemplateManagerTests not available</p>';
+            }
+            
+            results.innerHTML = html;
+        }, 2000);
+    </script>
+    
+    <script src="js/utils/templateManagerTests.js"></script>
+</body>
+</html>

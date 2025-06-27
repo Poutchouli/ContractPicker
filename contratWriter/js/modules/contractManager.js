@@ -3,7 +3,6 @@
  * Ce module s'occupe de la création, modification et suppression des offres et groupes
  */
 import { showNotification, formatSystime, isOlderThanOneMonth } from '../utils/helpers.js';
-import { openIconSelector } from './iconSelector.js';
 import { getCurrentTemplate } from './templateManager.js';
 import { logInfo, logError, logWarning, logSuccess } from '../utils/logger.js';
 
@@ -43,22 +42,8 @@ export function initContractManager(container, updateSummaryCallback) {
 function handleOfferActions(e) {
     const target = e.target;
     
-    // Bouton de modification d'icône
-    if (target.matches('.icon-btn')) {
-        const card = target.closest('.offer-card, .grouped-offer-card');
-        if (card) {
-            openIconSelector((selectedIcon) => {
-                const iconElement = card.querySelector('.offer-icon');
-                if (iconElement) {
-                    iconElement.textContent = selectedIcon;
-                    logInfo(`Icône de l'offre ${card.dataset.id} modifiée`);
-                }
-            });
-        }
-    }
-    
     // Bouton de suppression d'offre
-    else if (target.matches('.delete-offer-btn')) {
+    if (target.matches('.delete-offer-btn')) {
         const card = target.closest('.offer-card, .grouped-offer-card');
         if (card) {
             card.remove();
@@ -126,7 +111,6 @@ export function createNewOffer(container) {
         <div class="offer-header">
             <input type="checkbox" class="offer-checkbox">
             <span class="offer-icon">📄</span>
-            <button class="icon-btn" title="Changer l'icône">🖌️</button>
             <div class="offer-title">Offre #${nextOfferId}</div>
         </div>
         <div class="offer-inputs">
@@ -278,7 +262,6 @@ export function groupSelectedOffers(container) {
     groupCard.innerHTML = `
         <div class="offer-header">
             <span class="offer-icon">📦</span>
-            <button class="icon-btn" title="Changer l'icône">🖌️</button>
             <div class="offer-title">Groupe #${nextGroupId}</div>
         </div>
         <div class="grouped-offers-list">

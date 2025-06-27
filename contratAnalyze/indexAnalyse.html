@@ -3,79 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapport d'Aide à la Décision - Analyse des Offres de Contrat</title>
+    <title>Analyseur d'Offres de Contrat - Comparatif Multi-fichiers</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#1e40af',
+                        'secondary': '#64748b',
+                        'accent': '#059669'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-100 text-gray-800">
-    <!-- API Key Button and Modal -->
-    <button id="openApiModalBtn" class="fixed top-6 right-8 z-50 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-md flex items-center gap-2">
-        <span>🔑 API Gemini</span>
-    </button>
-    <div id="apiModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
-            <button id="closeApiModalBtn" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
-            <h2 class="text-xl font-bold mb-4 text-gray-800">Configurer la clé API Gemini</h2>
-            <input id="modalApiKeyInput" type="text" placeholder="Clé API Gemini" class="border rounded px-3 py-2 w-full mb-4" />
-            <div class="flex gap-3"></div>
-            <div id="testApiKeyResult" class="mt-3 text-sm"></div>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen font-inter">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">📊</span>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900">Analyseur de Contrats</h1>
+                        <p class="text-sm text-slate-600">Comparatif multi-fichiers et aide à la décision</p>
+                    </div>
+                </div>
+                <button id="openApiModalBtn" class="bg-primary hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition-colors">
+                    <span>🔑</span>
+                    <span>API Gemini</span>
+                </button>
+                <a href="../contratWriter/index.html" class="bg-accent hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition-colors ml-2">
+                    <span>📝</span>
+                    <span>Éditeur</span>
+                </a>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <div id="uploadPage" class="container mx-auto p-4 md:p-8">
-        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
-            <h1 class="text-3xl font-bold text-center mb-4 text-gray-800">Analyseur d'Offres de Contrat</h1>
-            <p class="text-center text-gray-600 mb-8">Importez votre fichier CSV exporté depuis l'outil de saisie pour générer un rapport d'aide à la décision destiné à la direction. Le fichier doit suivre le format d'export de l'outil.</p>
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 text-center">
-                <input type="file" id="csvFileInput" accept=".csv" class="mb-2" />
-                <div id="fileName" class="text-sm text-gray-500"></div>
+    <!-- API Key Modal -->
+    <div id="apiModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-slate-900">Configuration API Gemini</h2>
+                <button id="closeApiModalBtn" class="text-slate-400 hover:text-slate-600 text-xl">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <input id="modalApiKeyInput" type="password" placeholder="Entrez votre clé API Gemini" 
+                       class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                <div class="flex gap-2">
+                    <button id="testApiKeyBtn" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 px-4 rounded-lg transition-colors">
+                        Tester
+                    </button>
+                    <button id="saveApiKeyBtn" class="flex-1 bg-primary hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
+                        Sauvegarder
+                    </button>
+                </div>
+                <div id="testApiKeyResult" class="text-sm"></div>
             </div>
         </div>
     </div>
 
-    <div id="reportPage" class="hidden container mx-auto p-4 md:p-8">
-        <button id="backButton" class="mb-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105">
-            &larr; Retour à l'import
-        </button>
-        <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Rapport d'Aide à la Décision - Analyse des Offres de Contrat</h1>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Upload Page -->
+        <div id="uploadPage">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-2">Importation des fichiers d'offres</h2>
+                    <p class="text-slate-600 max-w-2xl mx-auto">
+                        Importez jusqu'à 10 fichiers JSON d'export d'offres pour une analyse comparative complète. 
+                        Tous les fichiers doivent utiliser le même template pour être compatibles.
+                    </p>
+                </div>
 
-        <!-- Executive Summary -->
-        <section id="executiveSummary" class="executive-section">
-            <h2 class="section-title">Résumé Exécutif</h2>
-            <div id="executiveSummaryContent" class="caption"></div>
-        </section>
+                <!-- File Upload Area -->
+                <div class="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-primary transition-colors bg-slate-50">
+                    <div class="space-y-4">
+                        <div class="flex justify-center">
+                            <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center">
+                                <span class="text-2xl">📁</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-lg font-medium text-slate-900 mb-1">Glissez-déposez vos fichiers JSON ici</p>
+                            <p class="text-slate-600">ou cliquez pour sélectionner (max 10 fichiers)</p>
+                        </div>
+                        <input type="file" id="jsonFileInput" accept=".json" multiple class="hidden" />
+                        <button id="selectFilesBtn" class="bg-primary hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+                            Sélectionner les fichiers
+                        </button>
+                    </div>
+                </div>
 
-        <!-- Summary Table -->
-        <section id="summaryTableSection" class="executive-section">
-            <h2 class="section-title">Tableau comparatif des offres</h2>
-            <div class="caption">Comparaison synthétique des principales caractéristiques de chaque offre.</div>
-            <div id="summaryTableContainer"></div>
-        </section>
+                <!-- Selected Files List -->
+                <div id="selectedFilesList" class="mt-6 hidden">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Fichiers sélectionnés</h3>
+                    <div id="filesContainer" class="space-y-3"></div>
+                    <div class="mt-6 flex justify-center">
+                        <button id="analyzeBtn" class="bg-accent hover:bg-emerald-700 text-white font-medium py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Analyser les offres
+                        </button>
+                    </div>
+                </div>
 
-        <!-- Charts Section -->
-        <section id="chartsSection" class="executive-section">
-            <h2 class="section-title">Visualisations clés</h2>
-            <div class="caption">Graphiques pour une vision globale et rapide des coûts et critères.</div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8" id="chartsGrid">
-                <div id="priceComparisonSection"></div>
-                <div id="featureComparisonSection"></div>
-                <div id="pieChartSection"></div>
-                <div id="lineChartSection"></div>
+                <!-- Template Compatibility Check -->
+                <div id="templateCheckResults" class="mt-6 hidden">
+                    <div class="bg-slate-50 rounded-lg p-4">
+                        <h4 class="font-medium text-slate-900 mb-2">Vérification de compatibilité des templates</h4>
+                        <div id="templateCheckContent"></div>
+                    </div>
+                </div>
             </div>
-        </section>
+        </div>
 
-        <!-- Decision Points -->
-        <section id="decisionPointsSection" class="executive-section">
-            <h2 class="section-title">Points clés pour la décision</h2>
-            <div id="decisionPointsContent"></div>
-        </section>
+        <!-- Analysis Results Page -->
+        <div id="reportPage" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <button id="backButton" class="flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-medium py-2 px-4 rounded-lg border border-slate-300 transition-colors">
+                    <span>←</span>
+                    <span>Retour</span>
+                </button>
+                <div class="text-right">
+                    <p class="text-sm text-slate-600">Analyse générée le</p>
+                    <p id="analysisDate" class="font-medium text-slate-900"></p>
+                </div>
+            </div>
 
-        <!-- Section IA (optionnel) -->
-        <div id="aiInsightsSection" class="executive-section"></div>
-    </div>
+            <!-- Executive Summary -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+                <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <span>📋</span>
+                    <span>Résumé Exécutif</span>
+                </h2>
+                <div id="executiveSummaryContent" class="prose prose-slate max-w-none"></div>
+            </div>
+
+            <!-- Charts and Analysis -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Comparaison des coûts</h3>
+                    <canvas id="costComparisonChart"></canvas>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Répartition par type</h3>
+                    <canvas id="typeDistributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <span>📊</span>
+                    <span>Analyse Détaillée</span>
+                </h2>
+                <div id="detailedAnalysisContent"></div>
+            </div>
+
+            <!-- AI Insights Section -->
+            <div id="aiInsightsSection" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mt-6 hidden">
+                <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <span>🤖</span>
+                    <span>Recommandations IA</span>
+                </h2>
+                <div id="aiInsightsContent"></div>
+            </div>
+        </div>
+    </main>
 
     <script src="script.js"></script>
 </body>

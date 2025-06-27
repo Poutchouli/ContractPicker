@@ -1,17 +1,60 @@
-# ContractPicker
+# ContractPicker - Outil d'Aide à la Décision Stratégique
 
-Application web pour comparer et organiser des offres de contrats.
+ContractPicker est un outil complet de comparaison et d'analyse d'offres de contrats. Il se compose de deux modules principaux :
 
-## Fonctionnalités
+## 🔧 Éditeur de Contrats (`contratWriter`)
 
-- Création et gestion d'offres de contrats
-- Regroupement d'offres similaires
-- Dissociation des groupes sans perte de données
-- Personnalisation des champs avec des templates
-- Sélection d'icônes pour les offres
-- Export et import des données au format JSON avec conservation des templates
-- Gestion des coûts supplémentaires
-- Console de débogage et de logs intégrée
+L'éditeur permet de créer, personnaliser et comparer des offres de contrats avec des templates flexibles.
+
+### Fonctionnalités principales :
+- **Gestion de templates personnalisables** avec 4 types de champs (texte, nombre, nombre avec période, liste)
+- **Création et modification d'offres** avec des champs dynamiques basés sur les templates
+- **Regroupement d'offres** avec possibilité de dissociation sans perte de données
+- **Export/Import JSON** préservant tous les templates et données
+- **Gestion des coûts supplémentaires** avec calculs automatiques
+- **Console d'erreur intégrée** pour le debugging et le monitoring
+- **Interface intuitive** avec notifications et feedback utilisateur
+
+### Types de champs supportés :
+- **Texte** : Champs de saisie simple
+- **Nombre** : Champs numériques avec validation
+- **Nombre avec période** : Nombres avec fréquence (mensuel, trimestriel, annuel)
+- **Liste** : Listes déroulantes avec options personnalisables
+
+## 📊 Analyseur de Contrats (`contratAnalyze`)
+
+L'analyseur permet d'importer et de comparer jusqu'à 10 fichiers JSON d'offres pour une analyse comparative avancée.
+
+### Fonctionnalités principales :
+- **Import multi-fichiers** (jusqu'à 10 fichiers JSON)
+- **Vérification de compatibilité** des templates entre fichiers
+- **Analyses visuelles** avec graphiques et statistiques
+- **Intégration IA** (Google Gemini) pour des recommandations intelligentes
+- **Export des résultats** d'analyse
+- **Interface moderne** avec Tailwind CSS
+
+## 🚀 Utilisation
+
+### Workflow recommandé :
+1. **Créer un template** dans l'éditeur avec les champs appropriés
+2. **Saisir les offres** en utilisant le template créé
+3. **Exporter en JSON** pour sauvegarder ou partager
+4. **Analyser avec l'analyseur** en important plusieurs fichiers JSON
+5. **Obtenir des recommandations** grâce à l'IA intégrée
+
+### Démarrage rapide :
+1. Ouvrez `contratWriter/index.html` pour commencer à créer des offres
+2. Utilisez le gestionnaire de templates pour personnaliser les champs
+3. Exportez vos données en JSON
+4. Ouvrez `contratAnalyze/indexAnalyse.html` pour analyser plusieurs exports
+
+## 🛠️ Technologies
+
+- **Frontend** : HTML5, CSS3, JavaScript ES6+
+- **Styling** : CSS custom + Tailwind CSS (analyseur)
+- **Graphiques** : Chart.js
+- **IA** : Google Gemini API
+- **Stockage** : LocalStorage + Export/Import JSON
 
 ## Structure du projet
 
@@ -96,3 +139,69 @@ ContractPicker.success(message);
 ```
 
 import { initContractManager, createNewOffer, groupSelectedOffers, setNextOfferId, setNextGroupId } from './modules/contractManager.js';
+
+- **Performance optimisée** avec gestion d'erreurs robuste
+- **Workflow complet** de la création à l'analyse
+
+## ⌨️ Raccourcis clavier
+
+- **Ctrl+N** - Ajouter une nouvelle offre
+- **Ctrl+S** - Exporter les données
+- **Ctrl+O** - Importer des données
+- **Ctrl+G** - Grouper les offres sélectionnées
+- **Ctrl+T** - Ouvrir le gestionnaire de templates
+
+## 🔧 Fonctionnalités avancées
+
+### Sauvegarde automatique
+- Sauvegarde automatique toutes les 30 secondes
+- Récupération en cas de fermeture accidentelle
+- Validation d'intégrité des données
+
+### Monitoring système
+- Surveillance des performances en temps réel
+- Détection automatique des erreurs
+- Rapports de santé système
+- Métriques d'utilisation
+
+### Validation des données
+- Vérification automatique de la cohérence
+- Alertes pour les données manquantes
+- Export sécurisé avec validation préalable
+
+### Accessibilité
+- Support complet du clavier
+- Tooltips informatifs
+- Interface adaptative
+- Mode d'aide intégré
+
+## 🚨 Dépannage
+
+### Console d'erreur
+Utilisez la console intégrée pour :
+- Diagnostiquer les problèmes
+- Suivre les opérations en cours
+- Accéder aux logs détaillés
+
+### Fonctions de diagnostic
+```javascript
+// Valider l'intégrité des données
+ContractPicker.validateData();
+
+// Récupérer depuis la sauvegarde automatique
+ContractPicker.recoverFromAutoSave();
+
+// Export sécurisé avec validation
+ContractPicker.exportDataSafely();
+
+// Rapport de statut système
+SystemStatus.getStatusReport();
+```
+
+## 📈 Performance
+
+L'application inclut :
+- **Monitoring automatique** des temps d'exécution
+- **Optimisation mémoire** avec nettoyage automatique
+- **Indicateurs visuels** pour les opérations lentes
+- **Mise en cache** des éléments fréquemment utilisés

@@ -3,62 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Picker</title>
+    <title>Contract Template Manager</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            color: #1976d2;
-        }
-        .redirect-message {
-            margin: 30px 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-            border-radius: 8px;
-        }
-        .redirect-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 20px 0;
-            background-color: #1976d2;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        .redirect-btn:hover {
-            background-color: #1565c0;
-        }
-    </style>
-    <script>
-        // After a short delay, redirect to the application
-        setTimeout(function() {
-            window.location.href = 'contratWriter/';
-        }, 1500);
-    </script>
 </head>
 <body>
-    <header>
-        <h1>Contract Picker</h1>
-    </header>
-    
-    <main>
-        <div class="redirect-message">
-            <p>Vous allez être redirigé vers l'application en quelques secondes...</p>
-            <p>Si la redirection automatique ne fonctionne pas, cliquez sur le bouton ci-dessous :</p>
-            <a href="contratWriter/" class="redirect-btn">Accéder à l'application</a>
+    <div class="container">
+        <header class="header">
+            <h1>📋 Contract Template Manager</h1>
+            <div class="header-actions">
+                <button id="newTemplateBtn" class="btn btn-primary">🆕 Nouveau Template</button>
+                <button id="importBtn" class="btn btn-secondary">📂 Importer JSON</button>
+                <button id="exportBtn" class="btn btn-success">💾 Exporter JSON</button>
+            </div>
+        </header>
+
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen active">
+            <div class="welcome-content">
+                <h2>Bienvenue dans Contract Template Manager</h2>
+                <p>Créez des templates de contrats personnalisés et gérez vos données facilement.</p>
+                <div class="welcome-actions">
+                    <button id="startNewBtn" class="btn btn-large btn-primary">🚀 Créer un nouveau template</button>
+                    <button id="loadExistingBtn" class="btn btn-large btn-secondary">📁 Charger un fichier existant</button>
+                </div>
+            </div>
         </div>
-    </main>
-    
-    <footer>
-        <p>&copy; 2023 Contract Picker - Application de comparaison de contrats</p>
-    </footer>
+
+        <!-- Template Creation Wizard -->
+        <div id="templateWizard" class="screen">
+            <div class="wizard-content">
+                <h2>🧙‍♂️ Assistant de création de template</h2>
+                <div class="wizard-steps">
+                    <!-- Step 1: Basic Info -->
+                    <div class="wizard-step active" data-step="1">
+                        <h3>Étape 1: Informations de base</h3>
+                        <div class="form-group">
+                            <label for="templateName">Nom du template:</label>
+                            <input type="text" id="templateName" placeholder="Ex: Contrat de location d'imprimante">
+                        </div>
+                        <div class="form-group">
+                            <label for="templateDescription">Description (optionnel):</label>
+                            <textarea id="templateDescription" placeholder="Description du type de contrat..."></textarea>
+                        </div>
+                        <button class="btn btn-primary" onclick="nextStep()">Suivant</button>
+                    </div>
+
+                    <!-- Step 2: Add Fields -->
+                    <div class="wizard-step" data-step="2">
+                        <h3>Étape 2: Champs du template</h3>
+                        <div class="fields-list" id="fieldsList">
+                            <!-- Fields will be added here -->
+                        </div>
+                        <div class="add-field-section">
+                            <h4>Ajouter un champ:</h4>
+                            <div class="add-field-form">
+                                <input type="text" id="fieldLabel" placeholder="Nom du champ">
+                                <select id="fieldType">
+                                    <option value="text">Texte</option>
+                                    <option value="number">Nombre</option>
+                                    <option value="select">Liste déroulante</option>
+                                    <option value="textarea">Zone de texte</option>
+                                </select>
+                                <button type="button" onclick="addField()">Ajouter</button>
+                            </div>
+                        </div>
+                        <div class="wizard-navigation">
+                            <button class="btn btn-secondary" onclick="prevStep()">Précédent</button>
+                            <button class="btn btn-primary" onclick="nextStep()">Suivant</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Review -->
+                    <div class="wizard-step" data-step="3">
+                        <h3>Étape 3: Validation</h3>
+                        <div id="templatePreview"></div>
+                        <div class="wizard-navigation">
+                            <button class="btn btn-secondary" onclick="prevStep()">Précédent</button>
+                            <button class="btn btn-success" onclick="createTemplate()">Créer le template</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contract Management Screen -->
+        <div id="contractScreen" class="screen">
+            <div class="contract-header">
+                <h2 id="currentTemplateName">Template actuel</h2>
+                <div class="contract-actions">
+                    <button id="addContractBtn" class="btn btn-primary">➕ Nouveau contrat</button>
+                    <button id="backToWelcomeBtn" class="btn btn-secondary">🏠 Retour</button>
+                </div>
+            </div>
+
+            <div class="contract-content">
+                <!-- Contracts List -->
+                <div class="contracts-section">
+                    <h3>Contrats</h3>
+                    <div id="contractsList" class="contracts-list">
+                        <!-- Contracts will be added here -->
+                    </div>
+                </div>
+
+                <!-- Extra Costs -->
+                <div class="extra-costs-section">
+                    <h3>Coûts supplémentaires</h3>
+                    <div id="extraCostsList" class="extra-costs-list">
+                        <!-- Extra costs will be added here -->
+                    </div>
+                    <button id="addExtraCostBtn" class="btn btn-secondary">➕ Ajouter un coût</button>
+                </div>
+
+                <!-- Global Discount -->
+                <div class="discount-section">
+                    <h3>Remise globale</h3>
+                    <div class="form-group">
+                        <label for="globalDiscount">Remise (%):</label>
+                        <input type="number" id="globalDiscount" min="0" max="100" value="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Total Calculator -->
+        <div id="totalCalculator" class="total-calculator">
+            <div class="calculator-header">
+                <h3>💰 Total</h3>
+                <select id="periodSelector">
+                    <option value="monthly">Mensuel</option>
+                    <option value="quarterly">Trimestriel</option>
+                    <option value="yearly">Annuel</option>
+                </select>
+            </div>
+            <div class="calculator-content">
+                <div class="total-breakdown">
+                    <div class="total-line">
+                        <span>Contrats:</span>
+                        <span id="contractsTotal">0 €</span>
+                    </div>
+                    <div class="total-line">
+                        <span>Coûts extra:</span>
+                        <span id="extraCostsTotal">0 €</span>
+                    </div>
+                    <div class="total-line discount-line">
+                        <span>Remise:</span>
+                        <span id="discountTotal">-0 €</span>
+                    </div>
+                    <div class="total-line final-total">
+                        <span>Total:</span>
+                        <span id="finalTotal">0 €</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Date Display -->
+        <div id="importDate" class="import-date">
+            <!-- Will show import date when applicable -->
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+
+    <script src="js/storage.js"></script>
+    <script src="js/templateWizard.js"></script>
+    <script src="js/contractManager.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

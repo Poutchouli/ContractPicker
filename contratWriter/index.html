@@ -5,20 +5,133 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Outil d'Aide à la Décision Stratégique</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-style.css">
     <link rel="stylesheet" href="css/extra-cost-section.css">
     <link rel="stylesheet" href="css/dropdown.css">
+    <link rel="stylesheet" href="css/template-editor.css">
 </head>
 <body>
 
-    <header>
-        <h1>Outil d'Aide à la Décision Stratégique pour Contrats</h1>
-        <div class="toolbar">
-            <button id="add-offer-btn" class="toolbar-btn">➕ Ajouter une offre</button>
-            <button id="group-offers-btn" class="toolbar-btn">🔗 Grouper les offres</button>
-            <button id="export-csv-btn" class="toolbar-btn">📤 Exporter (JSON)</button>
-            <button id="import-csv-btn" class="toolbar-btn">📥 Importer</button>
-            <input type="file" id="import-csv-input" accept=".csv,.json" style="display: none;">
-            <button id="template-manager-btn" class="toolbar-btn">📋 Gestion des templates</button>
+    <header class="modern-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <div class="brand-icon">📊</div>
+                <div class="brand-text">
+                    <h1 data-translate="appTitle">ContractPicker Pro</h1>
+                    <p data-translate="appSubtitle">Outil d'Aide à la Décision Stratégique</p>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <!-- Primary Actions -->
+                <div class="nav-section">
+                    <button id="add-offer-btn" class="nav-btn primary" title="Ajouter une nouvelle offre (Ctrl+N)">
+                        <span class="btn-icon">➕</span>
+                        <span class="btn-text" data-translate="newOffer">Nouvelle offre</span>
+                    </button>
+                    <button id="group-offers-btn" class="nav-btn secondary" title="Grouper les offres sélectionnées (Ctrl+G)">
+                        <span class="btn-icon">🔗</span>
+                        <span class="btn-text" data-translate="group">Grouper</span>
+                    </button>
+                </div>
+
+                <!-- File Operations -->
+                <div class="nav-section">
+                    <div class="dropdown">
+                        <button class="nav-btn success dropdown-toggle" title="Options de fichier">
+                            <span class="btn-icon">📁</span>
+                            <span class="btn-text" data-translate="file">Fichier</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <button id="export-csv-btn" class="dropdown-item" title="Exporter toutes les données en JSON (Ctrl+S)">
+                                <span class="btn-icon">📤</span>
+                                <span data-translate="export">Exporter</span>
+                            </button>
+                            <button id="import-csv-btn" class="dropdown-item" title="Importer des données depuis un fichier JSON (Ctrl+O)">
+                                <span class="btn-icon">📥</span>
+                                <span data-translate="import">Importer</span>
+                            </button>
+                        </div>
+                    </div>
+                    <input type="file" id="import-csv-input" accept=".csv,.json" style="display: none;">
+                </div>
+
+                <!-- Templates -->
+                <div class="nav-section">
+                    <div class="dropdown">
+                        <button class="nav-btn warning dropdown-toggle" title="Gestion des templates">
+                            <span class="btn-icon">📋</span>
+                            <span class="btn-text" data-translate="templates">Templates</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <button id="template-manager-btn" class="dropdown-item" title="Gérer les templates de champs (Ctrl+T)">
+                                <span class="btn-icon">⚙️</span>
+                                <span data-translate="manageTemplates">Gérer Templates</span>
+                            </button>
+                            <button id="premade-templates-btn" class="dropdown-item" title="Utiliser un template prédéfini">
+                                <span class="btn-icon">⚡</span>
+                                <span data-translate="premadeTemplates">Templates Prêts</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools -->
+                <div class="nav-section">
+                    <a href="../contratAnalyze/indexAnalyse.html" class="nav-btn accent" title="Ouvrir l'analyseur multi-fichiers">
+                        <span class="btn-icon">📊</span>
+                        <span class="btn-text" data-translate="analyzer">Analyseur</span>
+                    </a>
+                </div>
+
+                <!-- Settings & Help -->
+                <div class="nav-section">
+                    <div class="dropdown">
+                        <button id="theme-btn" class="nav-btn info dropdown-toggle" title="Choisir la palette de couleurs">
+                            <span class="btn-icon">🎨</span>
+                            <span class="btn-text" data-translate="colorPalette">Couleurs</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item color-theme-option" data-theme="light-gray" title="Thème gris clair">
+                                <span class="color-preview" style="background: linear-gradient(45deg, #f1f5f9, #e2e8f0);"></span>
+                                <span data-translate="lightGray">Gris Clair</span>
+                            </button>
+                            <button class="dropdown-item color-theme-option" data-theme="blue" title="Thème bleu">
+                                <span class="color-preview" style="background: linear-gradient(45deg, #dbeafe, #bfdbfe);"></span>
+                                <span data-translate="blue">Bleu</span>
+                            </button>
+                            <button class="dropdown-item color-theme-option" data-theme="green" title="Thème vert">
+                                <span class="color-preview" style="background: linear-gradient(45deg, #dcfce7, #bbf7d0);"></span>
+                                <span data-translate="green">Vert</span>
+                            </button>
+                            <button class="dropdown-item color-theme-option" data-theme="purple" title="Thème violet">
+                                <span class="color-preview" style="background: linear-gradient(45deg, #f3e8ff, #e9d5ff);"></span>
+                                <span data-translate="purple">Violet</span>
+                            </button>
+                            <button class="dropdown-item color-theme-option" data-theme="warm" title="Thème chaleureux">
+                                <span class="color-preview" style="background: linear-gradient(45deg, #fef3c7, #fde68a);"></span>
+                                <span data-translate="warm">Chaleureux</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="language-selector">
+                        <button id="language-btn" class="nav-btn language" title="Changer de langue / Change Language">
+                            <span class="btn-icon">🌐</span>
+                            <span class="btn-text" data-translate="language">Français</span>
+                        </button>
+                        <div class="language-dropdown" id="language-dropdown">
+                            <button class="language-option" data-lang="fr" data-translate="french">Français</button>
+                            <button class="language-option" data-lang="en" data-translate="english">English</button>
+                        </div>
+                    </div>
+                    <button id="help-btn" class="nav-btn help" title="Afficher l'aide et les raccourcis">
+                        <span class="btn-icon">❓</span>
+                        <span class="btn-text" data-translate="help">Aide</span>
+                    </button>
+                </div>
+            </nav>
         </div>
     </header>
 
@@ -37,13 +150,9 @@
         </div>
     </div>
 
-    <main class="container">
+    <main class="container main-content">
         <section class="card">
-            <h2>1. Saisissez et Normalisez vos Offres</h2>
-            <div class="contract-type-row" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;">
-                <label for="contract-offername-input" style="font-weight:bold;">Nom de cette offre :</label>
-                <input id="contract-offername-input" placeholder="Saisissez un nom pour ce lot ou cette série d'offres..." style="min-width:200px;">
-            </div>
+            <h2 data-translate="section1Title">1. Saisissez et Normalisez vos Offres</h2>
             <div id="contract-type-tips" style="margin-bottom:10px;color:#1976d2;font-size:15px;"></div>
             <div id="offers-container">
                 <!-- Les offres seront ajoutées dynamiquement ici -->
@@ -54,25 +163,27 @@
         
         <!-- Section des coûts supplémentaires déplacée avant l'export -->
         <section class="card" id="extra-costs-section">
-            <h2>2. Gestion des Coûts Supplémentaires</h2>
+            <h2 data-translate="section2Title">2. Gestion des Coûts Supplémentaires</h2>
             <div id="extra-costs-container" class="extra-costs-container">
                 <!-- Les coûts supplémentaires seront ajoutés ici par le module extraCostManager -->
             </div>
             <div class="extra-cost-actions">
-                <button id="add-extra-cost-section-btn" class="add-extra-cost-btn">+ Ajouter un coût supplémentaire</button>
+                <button id="add-extra-cost-section-btn" class="add-extra-cost-btn" data-translate="addExtraCost">+ Ajouter un coût supplémentaire</button>
             </div>
             <template class="extra-cost-template">
                 <div class="extra-cost-row">
-                    <input type="number" class="extra-cost-amount" placeholder="Montant (€)">
-                    <input type="number" class="extra-cost-frequency" min="1" value="1" style="width:60px;" title="Fréquence">
+                    <input type="number" class="extra-cost-amount" data-translate="amountPlaceholder" placeholder="Montant (€)">
+                    <input type="number" class="extra-cost-frequency" min="1" value="1" style="width:60px;" data-translate="frequency" title="Fréquence">
                     <select class="extra-cost-period">
-                        <option value="one">fois</option>
-                        <option value="monthly">/mois</option>
-                        <option value="quarterly">/trimestre</option>
-                        <option value="yearly">/an</option>
+                        <option value="once" data-translate="periodOnce">une fois</option>
+                        <option value="month" data-translate="periodMonth">par mois</option>
+                        <option value="quarter" data-translate="periodQuarter">par trimestre</option>
+                        <option value="year" data-translate="periodYear">par an</option>
+                        <option value="week" data-translate="periodWeek">par semaine</option>
+                        <option value="day" data-translate="periodDay">par jour</option>
                     </select>
                     <input type="text" class="extra-cost-note" placeholder="Note (ex: maintenance, livraison...)" style="width:180px;">
-                    <button class="remove-extra-cost-btn" type="button" title="Supprimer">🗑️</button>
+                    <button class="remove-extra-cost-btn" type="button" data-translate="deleteOffer" title="Supprimer">🗑️</button>
                 </div>
             </template>
         </section>
@@ -140,7 +251,7 @@
                             <button id="save-template-btn">Sauvegarder</button>
                         </div>
                         <div class="template-export">
-                            <button id="export-template-csv-btn">Exporter en PNG</button>
+                            <button id="export-template-csv-btn">Exporter template</button>
                         </div>
                     </div>
                     <div class="template-load-section">
@@ -149,8 +260,8 @@
                             <!-- Liste des templates sauvegardés -->
                         </div>
                         <div class="template-import">
-                            <input type="file" id="import-template-input" accept=".png" style="display:none;">
-                            <button id="import-template-btn">Importer depuis PNG</button>
+                            <input type="file" id="import-template-input" accept=".json" style="display:none;">
+                            <button id="import-template-btn">Importer template</button>
                         </div>
                     </div>
                 </div>
@@ -179,64 +290,78 @@
         </div>
     </template>
 
-    <!-- Modal pour sélection d'icônes -->
-    <div id="icon-selector-modal" class="modal">
-        <div class="modal-content" style="max-width:600px;">
+    <!-- Modern Help Modal -->
+    <div id="help-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
-                <h2>Sélectionner une icône</h2>
-                <span class="close-icon-modal">&times;</span>
+                <h2 class="modal-title" data-translate="helpModalTitle">Aide et Raccourcis Clavier</h2>
+                <button class="modal-close" id="close-help-modal" aria-label="Fermer">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="icon-selector-tabs">
-                    <button class="icon-selector-tab active" data-tab="preset">Icônes prédéfinies</button>
-                    <button class="icon-selector-tab" data-tab="upload">Importer une image</button>
-                </div>
-                
-                <div id="preset-tab" class="icon-selector-tab-content">
-                    <div class="icon-grid">
-                        <!-- Icônes prédéfinies -->
-                        <div class="icon-item" data-icon="📄"><span>📄</span></div>
-                        <div class="icon-item" data-icon="📊"><span>📊</span></div>
-                        <div class="icon-item" data-icon="📈"><span>📈</span></div>
-                        <div class="icon-item" data-icon="💼"><span>💼</span></div>
-                        <div class="icon-item" data-icon="🏢"><span>🏢</span></div>
-                        <div class="icon-item" data-icon="🔧"><span>🔧</span></div>
-                        <div class="icon-item" data-icon="🛠️"><span>🛠️</span></div>
-                        <div class="icon-item" data-icon="💰"><span>💰</span></div>
-                        <div class="icon-item" data-icon="💵"><span>💵</span></div>
-                        <div class="icon-item" data-icon="💻"><span>💻</span></div>
-                        <div class="icon-item" data-icon="🔒"><span>🔒</span></div>
-                        <div class="icon-item" data-icon="📱"><span>📱</span></div>
-                        <div class="icon-item" data-icon="🏭"><span>🏭</span></div>
-                        <div class="icon-item" data-icon="🚚"><span>🚚</span></div>
-                        <div class="icon-item" data-icon="⚙️"><span>⚙️</span></div>
-                        <div class="icon-item" data-icon="📋"><span>📋</span></div>
-                        <div class="icon-item" data-icon="📝"><span>📝</span></div>
-                        <div class="icon-item" data-icon="📑"><span>📑</span></div>
-                        <div class="icon-item" data-icon="🔍"><span>🔍</span></div>
-                        <div class="icon-item" data-icon="📞"><span>📞</span></div>
-                        <div class="icon-item" data-icon="📨"><span>📨</span></div>
-                        <div class="icon-item" data-icon="🌐"><span>🌐</span></div>
-                        <div class="icon-item" data-icon="🔌"><span>🔌</span></div>
-                        <div class="icon-item" data-icon="🖥️"><span>🖥️</span></div>
+                <div class="help-sections">
+                    <div class="help-section">
+                        <h3 data-translate="helpKeyboardShortcuts">Raccourcis Clavier</h3>
+                        <div class="shortcut-list">
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">Ctrl + N</span>
+                                <span class="shortcut-desc" data-translate="newOffer">Nouvelle offre</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">Ctrl + G</span>
+                                <span class="shortcut-desc" data-translate="group">Grouper les offres</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">Ctrl + S</span>
+                                <span class="shortcut-desc" data-translate="export">Exporter</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">Ctrl + O</span>
+                                <span class="shortcut-desc" data-translate="import">Importer</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">Ctrl + T</span>
+                                <span class="shortcut-desc" data-translate="templates">Templates</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">Escape</span>
+                                <span class="shortcut-desc">Fermer les modales</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                
-                <div id="upload-tab" class="icon-selector-tab-content" style="display:none;">
-                    <div class="upload-section">
-                        <input type="file" id="icon-upload" accept="image/*" style="display: none;">
-                        <button id="select-icon-file-btn" class="secondary-btn">Sélectionner une image</button>
-                        <div id="selected-icon-preview" class="mt-4"></div>
+                    
+                    <div class="help-section">
+                        <h3 data-translate="helpFeatures">Fonctionnalités</h3>
+                        <ul class="feature-list">
+                            <li>Création d'offres avec templates prédéfinis</li>
+                            <li>Calcul automatique des coûts annualisés</li>
+                            <li>Gestion des coûts supplémentaires</li>
+                            <li>Groupement et comparaison d'offres</li>
+                            <li>Export/Import des données</li>
+                            <li>Interface multilingue (FR/EN)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h3 data-translate="helpTips">Conseils d'utilisation</h3>
+                        <ul class="tips-list">
+                            <li>Utilisez les templates pour gagner du temps</li>
+                            <li>N'oubliez pas d'inclure les coûts supplémentaires</li>
+                            <li>Groupez les offres similaires pour comparaison</li>
+                            <li>Sauvegardez régulièrement vos données</li>
+                        </ul>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="apply-icon-btn">Appliquer</button>
-                <button id="cancel-icon-btn">Annuler</button>
+                <button class="btn btn-secondary" id="test-template-manager">Test Templates</button>
+                <button class="btn btn-primary" data-translate="close">Fermer</button>
             </div>
         </div>
     </div>
 
     <script type="module" src="js/app.js"></script>
+    <script src="js/utils/systemStatus.js"></script>
+    <script src="js/utils/templateManagerTests.js"></script>
+    <script src="js/integrationTest.js"></script>
 </body>
 </html>

@@ -1,88 +1,43 @@
 /**
- * Module de gestion des templates - Version Modernisée
+ * Module de gestion des templates - Version Simplifiée
  * Ce module s'occupe de gérer les templates utilisés pour créer et afficher les offres
  */
 import { showNotification } from '../utils/helpers.js';
 import { logInfo, logError, logWarning } from '../utils/logger.js';
 
-// Template par défaut - now with multilingual support
+// Template par défaut
 const defaultTemplate = {
     id: 'default',
-    name: {
-        fr: 'Template par défaut',
-        en: 'Default Template'
-    },
-    description: {
-        fr: 'Template générique pour toutes les offres',
-        en: 'Generic template for all offers'
-    },
+    name: 'Template par défaut',
     fields: [
         {
             id: 'offer-name',
-            label: {
-                fr: 'Nom de l\'offre',
-                en: 'Offer Name'
-            },
+            label: 'Nom de l\'offre',
             type: 'text',
-            placeholder: {
-                fr: 'Entrez le nom de l\'offre',
-                en: 'Enter the offer name'
-            },
+            placeholder: 'Entrez le nom de l\'offre',
             required: true
         },
         {
             id: 'offer-description',
-            label: {
-                fr: 'Description',
-                en: 'Description'
-            },
+            label: 'Description',
             type: 'textarea',
-            placeholder: {
-                fr: 'Description du contrat...',
-                en: 'Contract description...'
-            }
+            placeholder: 'Description du contrat...'
         },
         {
             id: 'offer-cost',
-            label: {
-                fr: 'Coût',
-                en: 'Cost'
-            },
+            label: 'Coût',
             type: 'number',
             placeholder: '0.00',
-            required: true,
-            prefix: '€',
-            step: '0.01'
+            required: true
         },
         {
             id: 'offer-cost-type',
-            label: {
-                fr: 'Période',
-                en: 'Period'
-            },
+            label: 'Période',
             type: 'select',
             options: [
-                { 
-                    value: 'monthly', 
-                    label: {
-                        fr: 'Mensuel',
-                        en: 'Monthly'
-                    }
-                },
-                { 
-                    value: 'quarterly', 
-                    label: {
-                        fr: 'Trimestriel',
-                        en: 'Quarterly'
-                    }
-                },
-                { 
-                    value: 'yearly', 
-                    label: {
-                        fr: 'Annuel',
-                        en: 'Annual'
-                    }
-                }
+                { value: 'monthly', label: 'Mensuel' },
+                { value: 'quarterly', label: 'Trimestriel' },
+                { value: 'yearly', label: 'Annuel' }
             ],
             required: true
         }
@@ -95,120 +50,11 @@ let currentTemplateId = 'default';
 let onTemplateChangeCallback = null;
 
 /**
- * Valide un champ de template
- * @param {Object} field - Le champ à valider
- * @returns {Object} Résultat de validation avec isValid et message
- */
-function validateField(field) {
-    if (!field.label || field.label.trim() === '') {
-        return { isValid: false, message: 'Le nom du champ est obligatoire' };
-    }
-    
-    if (!field.type || field.type.trim() === '') {
-        return { isValid: false, message: 'Le type de champ est obligatoire' };
-    }
-    
-    // Valider les types supportés
-    const supportedTypes = ['text', 'number', 'select', 'textarea'];
-    if (!supportedTypes.includes(field.type)) {
-        return { isValid: false, message: 'Type de champ non supporté' };
-    }
-    
-    // Pour les champs de type select, vérifier qu'il y a des options
-    if (field.type === 'select') {
-        if (!field.options || !Array.isArray(field.options) || field.options.length === 0) {
-            return { isValid: false, message: 'Les champs de type liste doivent avoir au moins une option' };
-        }
-    }
-    
-    return { isValid: true, message: 'Champ valide' };
-}
-
-/**
- * Valide un template entier
- * @param {Object} template - Le template à valider
- * @returns {Object} Résultat de validation avec isValid et message
- */
-function validateTemplate(template) {
-    if (!template.name || template.name.trim() === '') {
-        return { isValid: false, message: 'Le nom du template est obligatoire' };
-    }
-    
-    if (!template.fields || !Array.isArray(template.fields) || template.fields.length === 0) {
-        return { isValid: false, message: 'Le template doit avoir au moins un champ' };
-    }
-    
-    // Valider chaque champ
-    for (let i = 0; i < template.fields.length; i++) {
-        const fieldValidation = validateField(template.fields[i]);
-        if (!fieldValidation.isValid) {
-            return { 
-                isValid: false, 
-                message: `Erreur dans le champ ${i + 1}: ${fieldValidation.message}` 
-            };
-        }
-    }
-    
-    // Vérifier les doublons d'ID
-    const fieldIds = template.fields.map(f => f.id).filter(id => id);
-    const uniqueIds = [...new Set(fieldIds)];
-    if (fieldIds.length !== uniqueIds.length) {
-        return { isValid: false, message: 'Les IDs des champs doivent être uniques' };
-    }
-    
-    return { isValid: true, message: 'Template valide' };
-}
-
-/**
  * Initialise le module
  */
 export function initTemplateManager() {
-    try {
-        loadTemplates();
-        logInfo('Module de gestion des templates initialisé');
-        
-        // Make sure all required functions are globally available
-        ensureGlobalFunctions();
-    } catch (error) {
-        logError(`Erreur lors de l'initialisation du gestionnaire de templates: ${error.message}`);
-        // Fallback to default template
-        templates = [defaultTemplate];
-        currentTemplateId = 'default';
-    }
-}
-
-/**
- * Ensure all required functions are available globally
- */
-function ensureGlobalFunctions() {
-    const globalFunctions = {
-        openSimpleTemplateEditor,
-        setCurrentTemplate,
-        closeTemplateModal: () => {
-            const modal = document.getElementById('template-modal-container');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        },
-        deleteTemplateWithConfirm: (templateId) => {
-            const template = templates.find(t => t.id === templateId);
-            if (template && confirm(`Êtes-vous sûr de vouloir supprimer le template "${template.name}" ?`)) {
-                if (deleteTemplate(templateId)) {
-                    showNotification(`Template "${template.name}" supprimé`, 'success');
-                    openTemplateModal(); // Refresh the modal
-                }
-            }
-        }
-    };
-    
-    // Safely assign to window
-    Object.entries(globalFunctions).forEach(([name, func]) => {
-        try {
-            window[name] = func;
-        } catch (error) {
-            logError(`Erreur lors de l'assignation de la fonction globale ${name}: ${error.message}`);
-        }
-    });
+    loadTemplates();
+    logInfo('Module de gestion des templates initialisé');
 }
 
 /**
@@ -950,89 +796,6 @@ export function openTemplateModal() {
     });
 }
 
-/**
- * Initialise le drag and drop pour réorganiser les champs
- */
-function initFieldDragAndDrop() {
-    const fieldsContainer = document.getElementById('template-fields-container');
-    if (!fieldsContainer) return;
-
-    let draggedElement = null;
-    let draggedIndex = null;
-
-    // Ajouter les event listeners pour tous les champs existants
-    const fieldItems = fieldsContainer.querySelectorAll('.field-item');
-    fieldItems.forEach((item, index) => {
-        item.draggable = true;
-        item.addEventListener('dragstart', handleDragStart);
-        item.addEventListener('dragover', handleDragOver);
-        item.addEventListener('drop', handleDrop);
-        item.addEventListener('dragend', handleDragEnd);
-    });
-
-    function handleDragStart(e) {
-        draggedElement = this;
-        draggedIndex = Array.from(this.parentNode.children).indexOf(this);
-        this.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/html', this.outerHTML);
-    }
-
-    function handleDragOver(e) {
-        if (e.preventDefault) {
-            e.preventDefault();
-        }
-        e.dataTransfer.dropEffect = 'move';
-        return false;
-    }
-
-    function handleDrop(e) {
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        }
-
-        if (draggedElement !== this) {
-            const allItems = Array.from(this.parentNode.children);
-            const droppedIndex = allItems.indexOf(this);
-            
-            // Réorganiser dans le DOM
-            if (draggedIndex < droppedIndex) {
-                this.parentNode.insertBefore(draggedElement, this.nextSibling);
-            } else {
-                this.parentNode.insertBefore(draggedElement, this);
-            }
-
-            // Mettre à jour les indices dans les données
-            reorderFields(draggedIndex, droppedIndex);
-            
-            logInfo(`Champ déplacé de la position ${draggedIndex + 1} à ${droppedIndex + 1}`);
-        }
-
-        return false;
-    }
-
-    function handleDragEnd(e) {
-        this.classList.remove('dragging');
-        draggedElement = null;
-        draggedIndex = null;
-    }
-}
-
-/**
- * Réorganise les champs dans les données du template
- */
-function reorderFields(fromIndex, toIndex) {
-    if (!window.currentEditingFields) return;
-    
-    const fields = window.currentEditingFields;
-    const movedField = fields.splice(fromIndex, 1)[0];
-    fields.splice(toIndex, 0, movedField);
-    
-    // Régénérer l'affichage avec les nouveaux indices
-    refreshFieldsDisplay();
-}
-
-// ...existing code...
 window.closeTemplateModal = function() {
     const modal = document.getElementById('template-modal-container');
     if (modal) {
@@ -1049,141 +812,3 @@ window.deleteTemplateWithConfirm = function(templateId) {
         }
     }
 };
-
-// Make setCurrentTemplate available globally
-window.setCurrentTemplate = setCurrentTemplate;
-
-// Make the openSimpleTemplateEditor function globally available for onclick handlers
-window.openSimpleTemplateEditor = openSimpleTemplateEditor;
-
-// Make other template editor functions globally available
-window.closeSimpleTemplateEditor = function() {
-    const modal = document.getElementById('simple-template-editor');
-    if (modal) {
-        modal.remove();
-        logInfo('Éditeur de template fermé');
-    }
-};
-
-window.addNewField = function() {
-    if (!window.currentEditingFields) {
-        window.currentEditingFields = [];
-    }
-    
-    const newField = {
-        title: '',
-        type: 'text',
-        options: []
-    };
-    
-    window.currentEditingFields.push(newField);
-    refreshFieldsDisplay();
-    logInfo('Nouveau champ ajouté à l\'éditeur');
-};
-
-window.updateFieldTitle = function(index, title) {
-    if (window.currentEditingFields && window.currentEditingFields[index]) {
-        window.currentEditingFields[index].title = title;
-    }
-};
-
-window.updateFieldType = function(index, type) {
-    if (window.currentEditingFields && window.currentEditingFields[index]) {
-        window.currentEditingFields[index].type = type;
-        refreshFieldsDisplay();
-    }
-};
-
-window.removeField = function(index) {
-    if (window.currentEditingFields && confirm('Supprimer ce champ ?')) {
-        window.currentEditingFields.splice(index, 1);
-        refreshFieldsDisplay();
-        logInfo('Champ supprimé de l\'éditeur');
-    }
-};
-
-window.updatePeriodOption = function(index, period, checked) {
-    if (window.currentEditingFields && window.currentEditingFields[index]) {
-        if (!window.currentEditingFields[index].periodOptions) {
-            window.currentEditingFields[index].periodOptions = [];
-        }
-        
-        if (checked) {
-            if (!window.currentEditingFields[index].periodOptions.includes(period)) {
-                window.currentEditingFields[index].periodOptions.push(period);
-            }
-        } else {
-            const idx = window.currentEditingFields[index].periodOptions.indexOf(period);
-            if (idx > -1) {
-                window.currentEditingFields[index].periodOptions.splice(idx, 1);
-            }
-        }
-    }
-};
-
-window.addListOption = function(index) {
-    if (window.currentEditingFields && window.currentEditingFields[index]) {
-        if (!window.currentEditingFields[index].options) {
-            window.currentEditingFields[index].options = [];
-        }
-        window.currentEditingFields[index].options.push('');
-        refreshFieldsDisplay();
-    }
-};
-
-window.updateListOption = function(index, optionIndex, value) {
-    if (window.currentEditingFields && window.currentEditingFields[index] && window.currentEditingFields[index].options) {
-        window.currentEditingFields[index].options[optionIndex] = value;
-    }
-};
-
-window.removeListOption = function(index, optionIndex) {
-    if (window.currentEditingFields && window.currentEditingFields[index] && window.currentEditingFields[index].options) {
-        window.currentEditingFields[index].options.splice(optionIndex, 1);
-        refreshFieldsDisplay();
-    }
-};
-
-window.saveSimpleTemplate = function(isEditing) {
-    if (!window.currentEditingFields || window.currentEditingFields.length === 0) {
-        showNotification('Aucun champ défini', 'error');
-        return;
-    }
-
-    const templateName = document.getElementById('template-name-simple')?.value?.trim();
-    if (!templateName) {
-        showNotification('Le nom du template est obligatoire', 'error');
-        return;
-    }
-
-    // Convert simple fields to standard format
-    const standardFields = window.currentEditingFields.map(field => convertToStandardField(field));
-    
-    const template = {
-        id: isEditing ? window.currentEditingTemplateId : `template-${Date.now()}`,
-        name: templateName,
-        fields: standardFields
-    };
-
-    // Validate template
-    const validation = validateTemplate(template);
-    if (!validation.isValid) {
-        showNotification(validation.message, 'error');
-        return;
-    }
-
-    const success = isEditing ? updateTemplate(template) : addTemplate(template);
-    
-    if (success) {
-        showNotification(`Template ${isEditing ? 'modifié' : 'créé'} avec succès`, 'success');
-        window.closeSimpleTemplateEditor();
-        
-        // Trigger callback if available
-        if (onTemplateChangeCallback && typeof onTemplateChangeCallback === 'function') {
-            onTemplateChangeCallback();
-        }
-    }
-};
-
-// Initialiser le module
-initTemplateManager();
