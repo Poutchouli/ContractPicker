@@ -6,6 +6,7 @@ Application web pour comparer et organiser des offres de contrats.
 
 - Création et gestion d'offres de contrats
 - Regroupement d'offres similaires
+- Dissociation des groupes sans perte de données
 - Personnalisation des champs avec des templates
 - Sélection d'icônes pour les offres
 - Export et import des données au format JSON avec conservation des templates
@@ -17,7 +18,9 @@ Application web pour comparer et organiser des offres de contrats.
 ```
 ContractPicker/
 ├── css/
-│   └── style.css               # Styles CSS centralisés
+│   ├── style.css               # Styles CSS centralisés
+│   ├── extra-cost-section.css  # Styles pour la section des coûts supplémentaires
+│   └── dropdown.css            # Styles pour les menus déroulants
 ├── js/
 │   ├── app.js                  # Point d'entrée de l'application
 │   ├── modules/
@@ -28,8 +31,7 @@ ContractPicker/
 │   │   └── extraCostManager.js # Gestion des coûts supplémentaires
 │   └── utils/
 │       ├── helpers.js          # Fonctions utilitaires générales
-│       ├── logger.js           # Console de logs et erreurs
-│       └── steganography.js    # Fonctions de stéganographie
+│       └── logger.js           # Console de logs et erreurs
 ├── data/
 │   ├── memos.csv               # Données de mémos
 │   ├── modeles.csv             # Données de modèles
@@ -51,7 +53,6 @@ Une console de débogage est disponible dans le coin supérieur droit de l'appli
 La console peut être :
 - Déplacée par glisser-déposer de son en-tête
 - Minimisée avec le bouton "_"
-- Masquée avec le bouton "✖"
 - Vidée avec le bouton "🗑️"
 
 Les logs sont colorés selon leur niveau :
@@ -93,3 +94,5 @@ ContractPicker.warn(message);
 ContractPicker.error(message);
 ContractPicker.success(message);
 ```
+
+import { initContractManager, createNewOffer, groupSelectedOffers, setNextOfferId, setNextGroupId } from './modules/contractManager.js';

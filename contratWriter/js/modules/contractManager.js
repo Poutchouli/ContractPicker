@@ -95,7 +95,8 @@ function handleOfferActions(e) {
     // Bouton de dissociation de groupe
     else if (target.matches('.ungroup-btn')) {
         const groupCard = target.closest('.grouped-offer-card');
-        if (groupCard && confirm('Êtes-vous sûr de vouloir dissocier ce groupe d\'offres ?')) {
+        const container = groupCard.parentElement;
+        if (groupCard && container && confirm('Êtes-vous sûr de vouloir dissocier ce groupe d\'offres ?')) {
             ungroupOffers(groupCard, container);
             
             // Mettre à jour le résumé
@@ -330,28 +331,61 @@ export function updateSystimeDisplay(card) {
  * @param {HTMLElement} container - Conteneur des offres
  */
 function ungroupOffers(groupCard, container) {
-    if (!groupCard) {
-        logError('Carte de groupe non définie pour dissociation');
+    if (!groupCard || !container) {
+        logError("Impossible de dissocier le groupe: éléments manquants");
         return;
     }
     
-    const offerTitles = Array.from(groupCard.querySelectorAll('.grouped-offer-item'));
+    // Récupérer l'ID du groupe
+    const groupId = groupCard.dataset.id.split('-')[1];
+    logInfo(`Dissolution du groupe #${groupId} en cours...`);
     
-    // Recréer les offres à partir des titres
-    offerTitles.forEach(titleElement => {
-        const title = titleElement.textContent;
-        const newOffer = createNewOffer(container);
-        
-        // Mettre à jour le titre de l'offre
-        const titleEl = newOffer.querySelector('.offer-title');
-        if (titleEl) {
-            titleEl.textContent = title;
+    // Récupérer les titres des offres groupées
+    const offerItems = groupCard.querySelectorAll('.grouped-offer-item');
+    const offerTitles = Array.from(offerItems).map(item => item.textContent.trim());
+    
+    // Créer de nouvelles offres pour chaque offre du groupe
+    offerTitles.forEach(title => {
+        const newOfferCard = createNewOffer(container);
+        const titleInput = newOfferCard.querySelector('[id^="offer-name"]');
+        if (titleInput) {
+            titleInput.value = title;
         }
     });
     
-    // Supprimer le groupe
+    // Supprimer la carte du groupe
     groupCard.remove();
     
-    showNotification('Groupe dissocié', 'success');
-    logInfo(`Groupe ${groupCard.dataset.id} dissocié`);
+    // Afficher une notification
+    showNotification(`Groupe #${groupId} dissocié avec succès`, 'success');
+    logSuccess(`Groupe #${groupId} dissocié en ${offerTitles.length} offres individuelles`);
 }
+
+/**
+ * Définit le prochain ID d'offre à utiliser
+ * @param {number} id - Prochain ID d'offre
+ */
+export function setNextOfferId(id) {
+    if (typeof id === 'number' && id > 0) {
+        nextOfferId = id;
+        logInfo(`Prochain ID d'offre défini: ${id}`);
+    } else {
+        logError(`ID d'offre invalide: ${id}`);
+    }
+}
+
+/**
+ * Définit le prochain ID de groupe à utiliser
+ * @param {number} id - Prochain ID de groupe
+ */
+export function setNextGroupId(id) {
+    if (typeof id === 'number' && id > 0) {
+        nextGroupId = id;
+        logInfo(`Prochain ID de groupe défini: ${id}`);
+    } else {
+        logError(`ID de groupe invalide: ${id}`);
+    }
+}
+
+// Exporter la fonction ungroupOffers pour qu'elle soit accessible depuis l'extérieur
+export { ungroupOffers };
