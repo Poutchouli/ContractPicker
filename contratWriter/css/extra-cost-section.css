@@ -32,6 +32,13 @@
     gap: 10px;
     border: 1px solid #b0bec5;
     position: relative;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.extra-cost-item:hover {
+    background: #e1e6e9;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .delete-extra-cost-btn {
@@ -43,12 +50,14 @@
     font-size: 16px;
     margin-left: auto;
     opacity: 0.7;
-    transition: opacity 0.2s;
+    transition: all 0.2s ease;
+    border-radius: 3px;
 }
 
 .delete-extra-cost-btn:hover {
     opacity: 1;
-    background: none;
+    background: rgba(211, 47, 47, 0.1);
+    transform: scale(1.1);
 }
 
 .extra-cost-name {

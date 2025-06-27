@@ -78,31 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
         logError("Bouton #group-offers-btn introuvable dans le DOM");
     }
 
-    // Ajouter des gestionnaires pour les boutons d'export
+    // Ajouter un gestionnaire pour le bouton d'export
     if (exportBtn) {
         exportBtn.addEventListener('click', () => {
-            // Par défaut, exporter en CSV (pour les utilisateurs qui cliquent directement sur le bouton)
-            downloadContractsAsFile(offersContainer, false);
+            downloadContractsAsFile(offersContainer);
+            logInfo("Export au format JSON");
         });
     } else {
         logError("Bouton #export-csv-btn introuvable dans le DOM");
-    }
-    
-    // Gestionnaires pour les options du menu déroulant d'export
-    if (exportAsCSV) {
-        exportAsCSV.addEventListener('click', (e) => {
-            e.preventDefault();
-            downloadContractsAsFile(offersContainer, false);
-            logInfo("Export au format CSV");
-        });
-    }
-    
-    if (exportAsJSON) {
-        exportAsJSON.addEventListener('click', (e) => {
-            e.preventDefault();
-            downloadContractsAsFile(offersContainer, true);
-            logInfo("Export au format JSON");
-        });
     }
 
     // Ajouter un gestionnaire pour le bouton d'import

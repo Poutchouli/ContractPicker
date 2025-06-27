@@ -1,16 +1,16 @@
 /**
- * Module de gestion des formats d'exports et d'imports (CSV et JSON)
- * Ce module s'occupe de l'export des contrats vers CSV/JSON et de l'import depuis ces formats
- * Les fichiers CSV utilisent le séparateur ";" selon le standard européen
+ * Module de gestion des exports et imports JSON
+ * Ce module s'occupe de l'export des contrats vers JSON et de l'import depuis ce format
  */
 import { showNotification } from '../utils/helpers.js';
 import { logInfo, logError, logWarning, logSuccess } from '../utils/logger.js';
+import { getCurrentTemplate, getAllTemplates } from './templateManager.js';
 
 /**
- * Exporte les contrats vers un fichier CSV ou JSON
+ * Exporte les contrats vers un fichier JSON
  * @param {HTMLElement} container - Conteneur des offres
  * @param {Object} existingData - Données existantes (optionnel)
- * @returns {string} - Contenu CSV ou JSON
+ * @returns {string} - Contenu JSON
  */
 export function exportContractsToJSON(container, existingData = null) {
     if (!container && !existingData) {
@@ -85,16 +85,21 @@ export function exportContractsToJSON(container, existingData = null) {
         });
     }
     
+    // Récupérer tous les templates
+    const currentTemplate = getCurrentTemplate();
+    const allTemplates = getAllTemplates();
+    
     // Créer l'objet de données à exporter
     const exportData = {
         offers,
         extraCosts,
+        templates: allTemplates,
+        currentTemplateId: currentTemplate.id,
         metadata: {
             exportDate: new Date().toISOString(),
-            version: '1.1.0'
+            version: '2.0.0'
         },
-        // Le format sera défini lors de l'export selon l'extension choisie
-        format: null
+        format: 'json'
     };
     
     // Convertir en JSON pour la sortie
@@ -109,18 +114,14 @@ export function exportContractsToJSON(container, existingData = null) {
  * @param {HTMLElement} container - Conteneur des offres
  * @param {boolean} useJsonExtension - Si vrai, utilise l'extension .json au lieu de .csv
  */
-export function downloadContractsAsFile(container, useJsonExtension = false) {
+export function downloadContractsAsFile(container) {
     if (!container) {
         logError('Le conteneur des offres est indéfini');
         return;
     }
     
-    // Récupérer les données exportées sous forme d'objet
-    const dataObj = {
-        ...JSON.parse(exportContractsToJSON(container)),
-        // Définir le format selon l'extension choisie
-        format: useJsonExtension ? 'json' : 'csv'
-    };
+    // Récupérer les données exportées sous forme d'objet JSON
+    const dataObj = JSON.parse(exportContractsToJSON(container));
     
     if (!dataObj || !dataObj.offers) {
         logError('Aucune donnée à exporter');
@@ -128,19 +129,12 @@ export function downloadContractsAsFile(container, useJsonExtension = false) {
         return;
     }
     
-    // Générer le contenu selon le format choisi
-    let content;
-    if (useJsonExtension) {
-        content = JSON.stringify(dataObj, null, 2);
-    } else {
-        // Définir le format CSV et régénérer le contenu
-        dataObj.format = 'csv';
-        content = exportContractsToJSON(container, dataObj);
-    }
+    // Générer le contenu JSON
+    const content = JSON.stringify(dataObj, null, 2);
     
     // Déterminer le type MIME et l'extension de fichier
-    const fileExtension = useJsonExtension ? 'json' : 'csv';
-    const mimeType = useJsonExtension ? 'application/json' : 'text/csv';
+    const fileExtension = 'json';
+    const mimeType = 'application/json';
     
     // Créer un élément pour télécharger le fichier
     const blob = new Blob([content], { type: `${mimeType};charset=utf-8` });
@@ -185,7 +179,7 @@ export function importContractsFromCSV(file, container, createOfferCallback) {
     
     // Lire le fichier
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
         const data = e.target.result;
         
         try {
@@ -194,6 +188,27 @@ export function importContractsFromCSV(file, container, createOfferCallback) {
             try {
                 jsonData = JSON.parse(data);
                 if (jsonData && jsonData.offers) {
+                    // Importer les templates s'ils existent
+                    if (jsonData.templates && Array.isArray(jsonData.templates)) {
+                        try {
+                            // Importer les templates via templateManager
+                            const templatesModule = await import('./templateManager.js');
+                            jsonData.templates.forEach(template => {
+                                templatesModule.addTemplate(template);
+                            });
+                            
+                            // Définir le template actuel s'il existe
+                            if (jsonData.currentTemplateId) {
+                                templatesModule.setCurrentTemplate(jsonData.currentTemplateId);
+                            }
+                            
+                            logSuccess(`${jsonData.templates.length} templates importés avec succès`);
+                        } catch (templateError) {
+                            logError(`Erreur lors de l'import des templates: ${templateError.message}`);
+                        }
+                    }
+                    
+                    // Importer les données des offres
                     importOffersFromJsonData(jsonData, container, createOfferCallback);
                     logSuccess('Import JSON effectué avec succès');
                     showNotification('Import effectué avec succès', 'success');

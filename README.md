@@ -8,7 +8,7 @@ Application web pour comparer et organiser des offres de contrats.
 - Regroupement d'offres similaires
 - Personnalisation des champs avec des templates
 - Sélection d'icônes pour les offres
-- Export et import des données (formats CSV et JSON)
+- Export et import des données au format JSON avec conservation des templates
 - Gestion des coûts supplémentaires
 - Console de débogage et de logs intégrée
 
@@ -23,7 +23,7 @@ ContractPicker/
 │   ├── modules/
 │   │   ├── contractManager.js  # Gestion des offres et des groupes
 │   │   ├── iconSelector.js     # Sélecteur d'icônes
-│   │   ├── csvManager.js       # Import/export de données (CSV/JSON)
+│   │   ├── csvManager.js       # Import/export de données JSON
 │   │   ├── templateManager.js  # Gestion des templates de champs
 │   │   └── extraCostManager.js # Gestion des coûts supplémentaires
 │   └── utils/

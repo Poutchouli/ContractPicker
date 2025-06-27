@@ -264,9 +264,19 @@ function updateExtraCostsContainer(offersContainer, extraCosts) {
     // Ajouter les gestionnaires d'événements pour les boutons de suppression
     const deleteButtons = extraCostsContent.querySelectorAll('.delete-extra-cost-btn');
     deleteButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
+        // Supprime les gestionnaires existants pour éviter les doublons
+        const newButton = button.cloneNode(true);
+        button.parentNode.replaceChild(newButton, button);
+        
+        newButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
             const extraCostItem = e.target.closest('.extra-cost-item');
+            if (!extraCostItem) return;
+            
             const index = parseInt(extraCostItem.dataset.index);
+            if (isNaN(index) || index < 0 || index >= extraCosts.length) return;
             
             // Confirmer la suppression
             if (confirm(`Êtes-vous sûr de vouloir supprimer ce coût supplémentaire "${extraCosts[index].name}" ?`)) {
@@ -275,6 +285,11 @@ function updateExtraCostsContainer(offersContainer, extraCosts) {
                 
                 // Mettre à jour l'affichage
                 updateExtraCostsContainer(offersContainer, extraCosts);
+                
+                // Mettre à jour le résumé total
+                if (window.ContractPicker && window.ContractPicker.updateOffersTotalSummary) {
+                    window.ContractPicker.updateOffersTotalSummary();
+                }
                 
                 showNotification('Coût supplémentaire supprimé', 'success');
                 logInfo('Coût supplémentaire supprimé');

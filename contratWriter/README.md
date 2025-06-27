@@ -1,6 +1,6 @@
 # 📊 Outil de Normalisation et d'Export de Contrats
 
-Cet outil web permet de saisir, comparer et normaliser des offres de contrats, puis de les exporter facilement au format CSV pour partage ou analyse ultérieure.
+Cet outil web permet de saisir, comparer et normaliser des offres de contrats, puis de les exporter facilement au format JSON pour partage ou analyse ultérieure.
 
 ## Fonctionnalités principales
 
@@ -10,14 +10,14 @@ Cet outil web permet de saisir, comparer et normaliser des offres de contrats, p
 - **Personnalisation avec icônes** : Ajoutez des icônes personnalisées à vos templates et contrats (emojis prédéfinis ou images personnalisées).
 - **Clonage d'une offre** : Dupliquez rapidement une offre existante pour gagner du temps lors de la saisie.
 - **Regroupement d'offres** : Sélectionnez plusieurs offres pour les regrouper et obtenir des totaux et moyennes consolidés.
-- **Export/Import CSV et JSON** : Exportez et importez toutes vos offres saisies en un clic au format CSV ou JSON, pour analyse ou archivage.
+- **Export/Import JSON** : Exportez et importez toutes vos offres saisies en un clic au format JSON, y compris les templates et structures personnalisées.
 - **Console de débogage en temps réel** : Visualisez les messages d'information, avertissements et erreurs directement dans l'interface, avec possibilité de déplacer et redimensionner la console.
 
 ## Utilisation
 
 1. **Ouvrez `index.html` dans votre navigateur.**
 2. **Saisissez vos offres** : Ajoutez, éditez, regroupez, clonez, personnalisez avec des icônes et ajoutez des coûts supplémentaires.
-3. **Exportez** : Cliquez sur le bouton "Exporter" et choisissez le format souhaité (CSV ou JSON) pour télécharger vos données.
+3. **Exportez** : Cliquez sur le bouton "Exporter" pour télécharger vos données au format JSON.
 
 ## Gestion des templates
 

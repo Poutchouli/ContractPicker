@@ -5,7 +5,7 @@
 import { showNotification, formatSystime, isOlderThanOneMonth } from '../utils/helpers.js';
 import { openIconSelector } from './iconSelector.js';
 import { getCurrentTemplate } from './templateManager.js';
-import { logInfo, logError, logWarning } from '../utils/logger.js';
+import { logInfo, logError, logWarning, logSuccess } from '../utils/logger.js';
 
 let nextOfferId = 1;
 let nextGroupId = 1;
@@ -89,6 +89,18 @@ function handleOfferActions(e) {
         const card = target.closest('.offer-card');
         if (card) {
             card.classList.toggle('selected', target.checked);
+        }
+    }
+    
+    // Bouton de dissociation de groupe
+    else if (target.matches('.ungroup-btn')) {
+        const groupCard = target.closest('.grouped-offer-card');
+        if (groupCard && confirm('Êtes-vous sûr de vouloir dissocier ce groupe d\'offres ?')) {
+            ungroupOffers(groupCard, container);
+            
+            // Mettre à jour le résumé
+            const event = new CustomEvent('offersUpdated');
+            document.dispatchEvent(event);
         }
     }
 }
@@ -277,6 +289,7 @@ export function groupSelectedOffers(container) {
         </div>
         <div class="offer-footer">
             <button class="delete-offer-btn">🗑️ Supprimer</button>
+            <button class="ungroup-btn">🔓 Dissocier</button>
         </div>
     `;
     
@@ -298,33 +311,47 @@ export function updateSystimeDisplay(card) {
     const systimeSpan = card.querySelector('.offer-systime');
     if (systimeSpan) {
         let text = 'Ce contrat date de : ' + formatSystime(systime);
+        
+        // Avertissement si le contrat est ancien
         if (isOlderThanOneMonth(systime)) {
-            text += ' <span style="color:#c62828;font-weight:bold;">⚠️ Ce contrat pourrait ne plus être valide</span>';
+            text += ' (ancienne version)';
+            systimeSpan.classList.add('outdated');
+        } else {
+            systimeSpan.classList.remove('outdated');
         }
-        systimeSpan.innerHTML = text;
+        
+        systimeSpan.textContent = text;
     }
 }
 
 /**
- * Définit l'ID de la prochaine offre
- * @param {number} id - ID à définir
+ * Dissocie un groupe d'offres
+ * @param {HTMLElement} groupCard - La carte du groupe à dissocier
+ * @param {HTMLElement} container - Conteneur des offres
  */
-export function setNextOfferId(id) {
-    if (typeof id === 'number' && id > 0) {
-        nextOfferId = id;
-    } else {
-        logError('ID d\'offre invalide');
+function ungroupOffers(groupCard, container) {
+    if (!groupCard) {
+        logError('Carte de groupe non définie pour dissociation');
+        return;
     }
-}
-
-/**
- * Définit l'ID du prochain groupe
- * @param {number} id - ID à définir
- */
-export function setNextGroupId(id) {
-    if (typeof id === 'number' && id > 0) {
-        nextGroupId = id;
-    } else {
-        logError('ID de groupe invalide');
-    }
+    
+    const offerTitles = Array.from(groupCard.querySelectorAll('.grouped-offer-item'));
+    
+    // Recréer les offres à partir des titres
+    offerTitles.forEach(titleElement => {
+        const title = titleElement.textContent;
+        const newOffer = createNewOffer(container);
+        
+        // Mettre à jour le titre de l'offre
+        const titleEl = newOffer.querySelector('.offer-title');
+        if (titleEl) {
+            titleEl.textContent = title;
+        }
+    });
+    
+    // Supprimer le groupe
+    groupCard.remove();
+    
+    showNotification('Groupe dissocié', 'success');
+    logInfo(`Groupe ${groupCard.dataset.id} dissocié`);
 }
